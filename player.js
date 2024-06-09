@@ -10,7 +10,7 @@ export class Player {
         this.image = document.getElementById('player')
     }
     update(){
-
+        //this.x++
     }
     draw(context){
         context.imageSmoothingEnabled = false;

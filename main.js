@@ -23,7 +23,6 @@ window.addEventListener('load', function(){
     }
 
     const game = new Game(canvas.width, canvas.height);
-    console.log(game)
 
     function animate(){
         ctx.clearRect(0, 0, canvas.width, canvas.height);

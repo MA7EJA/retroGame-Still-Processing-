@@ -10,7 +10,7 @@ export class Player {
     this.x = 0;
     this.y = this.game.height - this.height;
     this.vy = 0;
-    this.weight = 0.3;
+    this.weight = 15;
     this.image = document.getElementById("player");
     this.frameX = 0;
     this.frameY = 0;
@@ -19,7 +19,7 @@ export class Player {
     this.frameInterval = 1000/this.fps;
     this.frameTimer = 0; 
     this.speed = 0;
-    this.maxSpeed = 3;
+    this.maxSpeed = 18;
     this.facingRight = true;
     this.states = [
       new Idle(this),
@@ -32,7 +32,7 @@ export class Player {
   }
   update(input, deltaTime) {
     this.currentState.handleInput(input);
-    this.x += this.speed;
+    this.x += this.speed * deltaTime * 0.01;
     if (input.includes("ArrowRight")) {
         this.speed = this.maxSpeed;
         this.facingRight = true;
@@ -44,8 +44,8 @@ export class Player {
     if (this.x > this.game.width - this.width)
       this.x = this.game.width - this.width;
 
-    this.y += this.vy;
-    if (!this.onGround()) this.vy += this.weight;
+    this.y += this.vy * deltaTime * 0.01;
+    if (!this.onGround()) this.vy += this.weight * deltaTime * 0.01;
     else this.vy = 0;
 
     if(this.frameTimer > this.frameInterval){

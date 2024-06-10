@@ -25,7 +25,7 @@ export class Player {
       new Idle(this),
       new Running(this),
       new Jumping(this),
-      new Falling(this),
+      new Falling(this)
     ];
     this.currentState = this.states[0];
     this.currentState.enter();

@@ -18,9 +18,9 @@ export class Idle extends State{
         this.player = player;
     }
     enter(){
-        this.player.frameX = 3;
+        this.player.frameX = 1;
         this.player.frameY = 2;
-        this.player.maxFrame = 3;
+        this.player.maxFrame = 1;
         this.loop = false; 
     }
     handleInput(input){

@@ -10,16 +10,17 @@ export class Player {
     this.x = 0;
     this.y = this.game.height - this.height;
     this.vy = 0;
-    this.weight = 1;
+    this.weight = 0.8;
     this.image = document.getElementById("player");
     this.frameX = 0;
     this.frameY = 0;
-    this.maxFrame = 5;
-    this.fps = 20;
+    this.maxFrame;
+    this.fps = 15;
     this.frameInterval = 1000/this.fps;
     this.frameTimer = 0; 
     this.speed = 0;
-    this.maxSpeed = 10;
+    this.maxSpeed = 3;
+    this.facingRight = true;
     this.states = [
       new Idle(this),
       new Running(this),
@@ -32,9 +33,13 @@ export class Player {
   update(input, deltaTime) {
     this.currentState.handleInput(input);
     this.x += this.speed;
-    if (input.includes("ArrowRight")) this.speed = this.maxSpeed;
-    else if (input.includes("ArrowLeft")) this.speed = -this.maxSpeed;
-    else this.speed = 0;
+    if (input.includes("ArrowRight")) {
+        this.speed = this.maxSpeed;
+        this.facingRight = true;
+    }else if (input.includes("ArrowLeft")) {
+        this.speed = -this.maxSpeed;
+        this.facingRight = false;
+    }else this.speed = 0;
     if (this.x < 0) this.x = 0;
     if (this.x > this.game.width - this.width)
       this.x = this.game.width - this.width;
@@ -56,17 +61,35 @@ export class Player {
     context.webkitImageSmoothingEnabled = false;
     context.mozImageSmoothingEnabled = false;
     context.msImageSmoothingEnabled = false;
-    context.drawImage(
-      this.image,
-      this.frameX * this.spriteWidth,
-      this.frameY * this.spriteHeight,
-      this.spriteWidth,
-      this.spriteHeight,
-      this.x,
-      this.y,
-      this.width,
-      this.height
-    );
+    if(this.facingRight){
+        context.drawImage(
+          this.image,
+          this.frameX * this.spriteWidth,
+          this.frameY * this.spriteHeight,
+          this.spriteWidth,
+          this.spriteHeight,
+          this.x,
+          this.y,
+          this.width,
+          this.height
+        );
+    }else{
+        context.save();
+        context.translate(this.x + this.width, this.y); // Pomeramo se do kraja slike po x osi
+        context.scale(-1, 1); // Flipujemo horizontalno
+        context.drawImage(
+          this.image,
+          this.frameX * this.spriteWidth,
+          this.frameY * this.spriteHeight,
+          this.spriteWidth,
+          this.spriteHeight,
+          0,
+          0,
+          this.width, // Širina je negativna kako bi se ispravno nacrtao flip
+          this.height
+        );
+        context.restore();
+    }
   }
   onGround() {
     return this.y >= this.game.height - this.height;

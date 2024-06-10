@@ -33,13 +33,21 @@ export class Player {
   update(input, deltaTime) {
     this.currentState.handleInput(input);
     this.x += this.speed * deltaTime * 0.01;
-    if (input.includes("ArrowRight")) {
-        this.speed = this.maxSpeed;
-        this.facingRight = true;
-    }else if (input.includes("ArrowLeft")) {
-        this.speed = -this.maxSpeed;
-        this.facingRight = false;
-    }else this.speed = 0;
+
+    switch (true){
+        case input.includes('ArrowRight'):
+            this.speed = this.maxSpeed;
+            this.facingRight = true;
+            break;
+        case input.includes('ArrowLeft'):
+            this.speed = -this.maxSpeed;
+            this.facingRight = false;
+            break;
+        default:
+            this.speed = 0;
+            break;
+    }
+
     if (this.x < 0) this.x = 0;
     if (this.x > this.game.width - this.width)
       this.x = this.game.width - this.width;

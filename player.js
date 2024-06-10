@@ -10,7 +10,7 @@ export class Player {
     this.x = 0;
     this.y = this.game.height - this.height;
     this.vy = 0;
-    this.weight = 0.8;
+    this.weight = 0.3;
     this.image = document.getElementById("player");
     this.frameX = 0;
     this.frameY = 0;
@@ -50,8 +50,15 @@ export class Player {
 
     if(this.frameTimer > this.frameInterval){
       this.frameTimer = 0;
-      if(this.frameX < this.maxFrame) this.frameX++;
-      else this.frameX = 0;
+      if (this.frameX < this.maxFrame) {
+        this.frameX++;
+      } else {
+        if (this.currentState.loop) {
+          this.frameX = 0;
+        } else {
+          this.frameX = this.maxFrame;
+        }
+      }
     }else {
         this.frameTimer += deltaTime;
     }
@@ -75,8 +82,8 @@ export class Player {
         );
     }else{
         context.save();
-        context.translate(this.x + this.width, this.y); // Pomeramo se do kraja slike po x osi
-        context.scale(-1, 1); // Flipujemo horizontalno
+        context.translate(this.x + this.width, this.y); 
+        context.scale(-1, 1);
         context.drawImage(
           this.image,
           this.frameX * this.spriteWidth,
@@ -85,7 +92,7 @@ export class Player {
           this.spriteHeight,
           0,
           0,
-          this.width, // Širina je negativna kako bi se ispravno nacrtao flip
+          this.width,
           this.height
         );
         context.restore();

@@ -3,7 +3,8 @@ const states = {
   RUNNING: 1,
   JUMPING: 2,
   FALLING: 3,
-  SHOOTING: 4
+  SHOOTING: 4,
+  RUNNINGSHOOTING: 5
 };
 
 class State {
@@ -54,6 +55,12 @@ export class Running extends State {
       this.player.setState(states.IDLE);
     } else if (input.includes("ArrowUp") && this.player.onGround()) {
       this.player.setState(states.JUMPING);
+    } else if (
+      input.includes("x") &&
+      (input.includes("ArrowLeft") || input.includes("ArrowRight")) &&
+      this.player.onGround()
+    ) {
+      this.player.setState(states.RUNNINGSHOOTING);
     }
   }
 }
@@ -116,6 +123,34 @@ export class Shooting extends State {
       this.loop = false;
     }else{
       this.loop = true;
+    }
+  }
+}
+
+export class RunningShooting extends State {
+  constructor(player) {
+    super("RunningShooting");
+    this.player = player;
+  }
+  enter() {
+    this.player.frameX = 0;
+    this.player.frameY = 0;
+    this.player.maxFrame = 7;
+    this.loop = false;
+  }
+  handleInput(input) {
+    if (this.player.frameX >= this.player.maxFrame && !input.includes("x")) {
+      this.player.setState(states.IDLE);
+      this.loop = false;
+    } else {
+      this.loop = true;
+    }
+    if (
+      !input.includes("ArrowRight") &&
+      !input.includes("ArrowLeft") &&
+      input.includes("x")
+    ) {
+      this.player.setState(states.SHOOTING);
     }
   }
 }

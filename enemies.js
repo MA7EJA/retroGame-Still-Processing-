@@ -15,7 +15,16 @@ class Enemy {
 }
 
 class SpiderEnemy extends Enemy{
-
+    constructor(game){
+        super();
+        this.game = game;
+        this.width = 48;
+        this.height = 48;
+        this.x = 200;
+        this.y = 200;
+        this.speedX = 2;
+        this.maxFrame;
+    }
 }
 
 class SnakeEnemy extends Enemy{
@@ -23,5 +32,5 @@ class SnakeEnemy extends Enemy{
 }
 
 class OctopusEnemy extends Enemy{
-    
+
 }

@@ -1,4 +1,4 @@
-import { Idle, Running, Jumping, Falling } from "./playerStates.js";
+import { Idle, Running, Jumping, Falling, Shooting } from "./playerStates.js";
 
 export class Player {
   constructor(game) {
@@ -25,7 +25,8 @@ export class Player {
       new Idle(this),
       new Running(this),
       new Jumping(this),
-      new Falling(this)
+      new Falling(this),
+      new Shooting(this)
     ];
     this.currentState = this.states[0];
     this.currentState.enter();
@@ -34,18 +35,23 @@ export class Player {
     this.currentState.handleInput(input);
     this.x += this.speed * deltaTime * 0.01;
 
-    switch (true){
-        case input.includes('ArrowRight'):
-            this.speed = this.maxSpeed;
-            this.facingRight = true;
-            break;
-        case input.includes('ArrowLeft'):
-            this.speed = -this.maxSpeed;
-            this.facingRight = false;
-            break;
+    if (this.currentState instanceof Shooting) {
+      this.speed = 0;
+    } else {
+      // Inače, omogući kretanje
+      switch (true) {
+        case input.includes("ArrowRight"):
+          this.speed = this.maxSpeed;
+          this.facingRight = true;
+          break;
+        case input.includes("ArrowLeft"):
+          this.speed = -this.maxSpeed;
+          this.facingRight = false;
+          break;
         default:
-            this.speed = 0;
-            break;
+          this.speed = 0;
+          break;
+      }
     }
 
     if (this.x < 0) this.x = 0;

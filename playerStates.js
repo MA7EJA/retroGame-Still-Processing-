@@ -1,9 +1,10 @@
 const states = {
-    IDLE: 0,
-    RUNNING: 1,
-    JUMPING: 2,
-    FALLING: 3
-}
+  IDLE: 0,
+  RUNNING: 1,
+  JUMPING: 2,
+  FALLING: 3,
+  SHOOTING: 4
+};
 
 class State {
     constructor(state){
@@ -28,6 +29,8 @@ export class Idle extends State{
           this.player.setState(states.RUNNING);
         } else if (input.includes("ArrowUp") && this.player.onGround()) {
           this.player.setState(states.JUMPING);
+        } else if (input.includes('x') && this.player.onGround()){
+          this.player.setState(states.SHOOTING);
         }
     }
 }
@@ -92,6 +95,27 @@ export class Falling extends State {
       this.player.setState(states.IDLE);
     } else if (input.includes("ArrowUp") && this.player.onGround()) {
       this.player.setState(states.JUMPING);
+    }
+  }
+}
+
+export class Shooting extends State {
+  constructor(player, speed) {
+    super("Shooting");
+    this.player = player;
+  }
+  enter() {
+    this.player.frameX = 0;
+    this.player.frameY = 4;
+    this.player.maxFrame = 5;
+    this.loop = false;
+  }
+  handleInput(input) {
+    if (this.player.frameX >= this.player.maxFrame && !input.includes("x")) {
+      this.player.setState(states.IDLE);
+      this.loop = false;
+    }else{
+      this.loop = true;
     }
   }
 }

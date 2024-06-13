@@ -1,6 +1,7 @@
 import { Player } from './player.js'
 import { InputHandler } from './input.js';
 import { Background } from './background.js';
+import { FloorCollisions } from "./collisions.js";
 
 window.addEventListener('load', function(){
     const canvas = document.getElementById('canvas');
@@ -13,6 +14,7 @@ window.addEventListener('load', function(){
         this.width = width;
         this.height = height;
         this.background = new Background(this);
+        this.floorCollisions = new FloorCollisions();
         this.player = new Player(this);
         this.input = new InputHandler();
       }
@@ -22,6 +24,7 @@ window.addEventListener('load', function(){
       }
       draw(context) {
         this.background.draw(context);
+        this.floorCollisions.draw(context);
         this.player.draw(context);
       }
     }

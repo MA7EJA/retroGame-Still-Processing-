@@ -33,8 +33,28 @@ export class FloorCollisions {
       762, 0, 762, 0, 0, 0, 762, 762, 762, 762, 762, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 762, 0, 762, 0, 0, 0, 762, 0, 0, 0, 762, 0,
     ];
+    this.platformCollisions = [
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 762, 762, 762, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      762, 762, 762, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    ];
     this.collisions2D = [];
+    this.platformCollisions2D = [];
     this.collisionBlocks = [];
+    this.platformCollisionBlocks = [];
 
     this.splitInto2DArray();
   }
@@ -42,6 +62,9 @@ export class FloorCollisions {
   splitInto2DArray() {
     for (let i = 0; i < this.collisions.length; i += 24) {
       this.collisions2D.push(this.collisions.slice(i, i + 24));
+    }
+    for (let i = 0; i < this.platformCollisions.length; i += 24) {
+      this.platformCollisions2D.push(this.platformCollisions.slice(i, i + 24));
     }
     this.collisions2D.forEach((row, y) => {
       row.forEach((symbol, x) => {
@@ -55,10 +78,23 @@ export class FloorCollisions {
         }
       });
     });
+    this.platformCollisions2D.forEach((row, y) => {
+      row.forEach((symbol, x) => {
+        if (symbol === 762) {
+          this.platformCollisionBlocks.push(
+            new CollisionBlock({
+              x: x * 32,
+              y: y * 32,
+            })
+          );
+        }
+      });
+    });
   }
 
   draw(context) {
     this.collisionBlocks.forEach((block) => block.draw(context));
+    this.platformCollisionBlocks.forEach((block) => block.draw(context));
   }
 }
 

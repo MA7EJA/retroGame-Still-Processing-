@@ -1,7 +1,7 @@
 import { Idle, Running, Jumping, Falling, Shooting, RunningShooting } from "./playerStates.js";
 
 export class Player {
-  constructor(game) {
+  constructor(game, deltaTime) {
     this.game = game;
     this.spriteWidth = 48;
     this.spriteHeight = 48;

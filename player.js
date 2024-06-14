@@ -32,6 +32,7 @@ export class Player {
     this.currentState = this.states[0];
     this.currentState.enter();
     this.floorCollisions = floorCollisions;
+    this.isOnGround = false;
   }
   update(input, deltaTime) {
     this.currentState.handleInput(input);
@@ -60,7 +61,7 @@ export class Player {
       this.x = this.game.width - this.width;
 
     this.y += this.vy * deltaTime * 0.01;
-    if (!this.onGround()) this.vy += this.weight * deltaTime * 0.01;
+    if (!this.isOnGround) this.vy += this.weight * deltaTime * 0.01;
     else this.vy = 0;
 
     this.checkForVerticalCollision(); 
@@ -115,14 +116,12 @@ export class Player {
       context.restore();
     }
   }
-  onGround() {
-    return this.y >= this.game.height - this.height;
-  }
   setState(state) {
     this.currentState = this.states[state];
     this.currentState.enter();
   }
   checkForVerticalCollision(){
+    this.isOnGround = false;
     for (let i = 0; i < this.floorCollisions.collisionBlocks.length; i++) {
       const collisionBlock = this.floorCollisions.collisionBlocks[i];
 
@@ -138,7 +137,7 @@ export class Player {
       ) {
         if (this.vy > 0) {
           this.vy = 0;
-          this.onGround();
+          this.isOnGround = true;
         }
       }
     }

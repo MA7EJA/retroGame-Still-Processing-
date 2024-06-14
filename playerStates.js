@@ -28,9 +28,9 @@ export class Idle extends State{
     handleInput(input){
         if (input.includes("ArrowLeft") || input.includes("ArrowRight")) {
           this.player.setState(states.RUNNING);
-        } else if (input.includes("ArrowUp") && this.player.onGround()) {
+        } else if (input.includes("ArrowUp") && this.player.isOnGround) {
           this.player.setState(states.JUMPING);
-        } else if (input.includes('x') && this.player.onGround()){
+        } else if (input.includes("x") && this.player.isOnGround) {
           this.player.setState(states.SHOOTING);
         }
     }
@@ -53,12 +53,12 @@ export class Running extends State {
       input.indexOf("ArrowRight") === -1
     ) {
       this.player.setState(states.IDLE);
-    } else if (input.includes("ArrowUp") && this.player.onGround()) {
+    } else if (input.includes("ArrowUp") && this.player.isOnGround) {
       this.player.setState(states.JUMPING);
     } else if (
       input.includes("x") &&
       (input.includes("ArrowLeft") || input.includes("ArrowRight")) &&
-      this.player.onGround()
+      this.player.isOnGround
     ) {
       this.player.setState(states.RUNNINGSHOOTING);
     }
@@ -72,11 +72,12 @@ export class Jumping extends State {
   }
   enter() {
     this.player.vy = 0;
-    if(this.player.onGround()) this.player.vy = -60;
+    if (this.player.isOnGround) this.player.vy = -60;
     this.player.frameX = 0;
     this.player.frameY = 3;
     this.player.maxFrame = 3;
     this.loop = false; 
+    this.player.isOnGround = false;
   }
   handleInput(input) {
     if (this.player.vy > this.player.weight) {
@@ -98,9 +99,9 @@ export class Falling extends State {
     this.loop = false; 
   }
   handleInput(input) {
-    if (this.player.onGround()) {
+    if (this.player.isOnGround) {
       this.player.setState(states.IDLE);
-    } else if (input.includes("ArrowUp") && this.player.onGround()) {
+    } else if (input.includes("ArrowUp") && this.player.isOnGround) {
       this.player.setState(states.JUMPING);
     }
   }

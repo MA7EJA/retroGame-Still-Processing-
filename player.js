@@ -56,6 +56,7 @@ export class Player {
       }
     }
 
+
     if (this.x < 0) this.x = 0;
     if (this.x > this.game.width - this.width)
       this.x = this.game.width - this.width;
@@ -64,7 +65,7 @@ export class Player {
     if (!this.isOnGround) this.vy += this.weight * deltaTime * 0.01;
     else this.vy = 0;
 
-    this.checkForVerticalCollision(); 
+    this.checkForVerticalCollision();
 
     if (this.frameTimer > this.frameInterval) {
       this.frameTimer = 0;
@@ -115,31 +116,71 @@ export class Player {
       );
       context.restore();
     }
+    context.strokeRect(
+      this.x + this.width / 2.5,
+      this.y + this.height / 3.5,
+      this.width / 5,
+      this.height / 2.5
+    );
   }
   setState(state) {
     this.currentState = this.states[state];
     this.currentState.enter();
   }
-  checkForVerticalCollision(){
+  
+
+  checkForVerticalCollision() {
+    let playerX = this.x + this.width / 2.5;
+    let playerY = this.y + this.height / 3.5;
+    let playerWidth = this.width / 5;
+    let playerHeight = this.height / 2.5;
+
     this.isOnGround = false;
+    let collisionFromBelow = false;
+
     for (let i = 0; i < this.floorCollisions.collisionBlocks.length; i++) {
       const collisionBlock = this.floorCollisions.collisionBlocks[i];
 
       if (
-        this.y + this.height / 3.5 + this.height / 2.5 >=
-          collisionBlock.position.y &&
-        this.y + this.height / 3.5 <=
-          collisionBlock.position.y + collisionBlock.height &&
-        this.x + this.width / 2.5 <=
-          collisionBlock.position.x + collisionBlock.width &&
-        this.x + this.width / 2.5 + this.width / 3.5 >=
-          collisionBlock.position.x
+        this.collision(
+          collisionBlock,
+          playerX,
+          playerY,
+          playerWidth,
+          playerHeight
+        )
       ) {
-        if (this.vy > 0) {
-          this.vy = 0;
+        const blockTop = collisionBlock.position.y;
+        const blockBottom = collisionBlock.position.y + collisionBlock.height;
+
+        // Provera da li se sudar dogodio odozdo
+        if (
+          playerY + playerHeight > blockTop &&
+          playerY + playerHeight < blockBottom
+        ) {
+          this.y = blockTop - (this.height / 3.5 + playerHeight + 0.01);
           this.isOnGround = true;
+          this.vy = 0;
+          collisionFromBelow = true;
+        } else if (playerY < blockBottom && playerY > blockTop) {
+          // Sudar odozgo
+          this.y = blockBottom - this.height / 3.5;
+          this.vy += this.weight;
         }
       }
     }
+
+    if (this.isOnGround && !collisionFromBelow) {
+      this.vy = 0;
+    }
+  }
+
+  collision(collisionBlock, playerX, playerY, playerWidth, playerHeight) {
+    return (
+      playerY + playerHeight >= collisionBlock.position.y &&
+      playerY <= collisionBlock.position.y + collisionBlock.height &&
+      playerX <= collisionBlock.position.x + collisionBlock.width &&
+      playerX + playerWidth >= collisionBlock.position.x
+    );
   }
 }

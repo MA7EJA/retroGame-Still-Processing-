@@ -56,6 +56,7 @@ export class Player {
       }
     }
 
+    this.checkForHorizontalCollision();
 
     if (this.x < 0) this.x = 0;
     if (this.x > this.game.width - this.width)
@@ -127,7 +128,50 @@ export class Player {
     this.currentState = this.states[state];
     this.currentState.enter();
   }
-  
+  checkForHorizontalCollision() {
+    let playerX = this.x + this.width / 2.5;
+    let playerY = this.y + this.height / 3.5;
+    let playerWidth = this.width / 5;
+    let playerHeight = this.height / 2.5;
+
+    let collisionFromLeft = false;
+    let collisionFromRight = false;
+
+    for (let i = 0; i < this.floorCollisions.collisionBlocks.length; i++) {
+      const collisionBlock = this.floorCollisions.collisionBlocks[i];
+
+      if (
+        this.collision(
+          collisionBlock,
+          playerX,
+          playerY,
+          playerWidth,
+          playerHeight
+        )
+      ) {
+        const blockLeft = collisionBlock.position.x;
+        const blockRight = collisionBlock.position.x + collisionBlock.width;
+
+        if (
+          playerY + playerHeight > collisionBlock.position.y &&
+          playerY < collisionBlock.position.y + collisionBlock.height
+        ) {
+          if (playerX + playerWidth > blockLeft && playerX < blockLeft) {
+            collisionFromLeft = true;
+            this.speed = 0;
+            this.x = blockLeft - (this.width / 2.4 + playerWidth);
+          } else if (
+            playerX < blockRight &&
+            playerX + playerWidth > blockRight
+          ) {
+            collisionFromRight = true;
+            this.x = blockRight - this.width / 2.6;
+            this.speed = 0;
+          }
+        }
+      }
+    }
+  }
 
   checkForVerticalCollision() {
     let playerX = this.x + this.width / 2.5;

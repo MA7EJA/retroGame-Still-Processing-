@@ -1,8 +1,8 @@
 export class CollisionBlock {
-  constructor(position) {
+  constructor(position, height = 32) {
     this.position = position;
     this.width = 32;
-    this.height = 32;
+    this.height = height;
   }
 
   draw(context) {
@@ -85,7 +85,7 @@ export class FloorCollisions {
             new CollisionBlock({
               x: x * 32,
               y: y * 32,
-            })
+            }, 16)
           );
         }
       });

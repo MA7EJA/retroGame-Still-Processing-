@@ -8,7 +8,7 @@ export class Player {
     this.width = this.spriteWidth * 2;
     this.height = this.spriteHeight * 2;
     this.x = 0;
-    this.y = this.game.height - this.height * 2;
+    this.y = 50;
     this.vy = 0;
     this.weight = 15;
     this.image = document.getElementById("player");
@@ -68,6 +68,13 @@ export class Player {
 
     this.checkForVerticalCollision();
     this.checkForPlatformVerticalCollision();
+
+    if (
+      this.vy > 2 &&
+      !(this.currentState instanceof Falling)
+    ) {
+      this.setState(3);
+    }
 
     if (this.frameTimer > this.frameInterval) {
       this.frameTimer = 0;
@@ -233,7 +240,7 @@ export class Player {
         this.floorCollisions.platformCollisionBlocks[i];
 
       if (
-        this.collision(
+        this.platformCollision(
           platformCollisionBlock,
           playerX,
           playerY,
@@ -241,22 +248,23 @@ export class Player {
           playerHeight
         )
       ) {
-         const blockTop = platformCollisionBlock.position.y;
-         const blockLeft = platformCollisionBlock.position.x;
-         const blockRight =
-           platformCollisionBlock.position.x + platformCollisionBlock.width;
-
-         if (
-           playerY + playerHeight > blockTop &&
-           playerY < blockTop &&
-           playerX + playerWidth > blockLeft &&
-           playerX < blockRight &&
-           this.vy >= 0
-         ) {
-           this.y = blockTop - (this.height / 3.5 + playerHeight + 0.01);
-           this.isOnGround = true;
-           this.vy = 0;
-         }
+        const blockTop = platformCollisionBlock.position.y;
+        const blockLeft = platformCollisionBlock.position.x;
+        const blockRight =
+          platformCollisionBlock.position.x + platformCollisionBlock.width;
+        if (
+          playerY + playerHeight > blockTop &&
+          playerY < blockTop &&
+          playerX + playerWidth > blockLeft &&
+          playerX < blockRight
+        ) {
+          this.y = blockTop - (this.height / 3.5 + playerHeight) - 0.01;
+          this.isOnGround = true;
+          this.vy = 0;
+           if (this.currentState instanceof Jumping) {
+             this.setState(0);
+           }
+        }
       }
     }
   }
@@ -265,6 +273,15 @@ export class Player {
     return (
       playerY + playerHeight >= collisionBlock.position.y &&
       playerY <= collisionBlock.position.y + collisionBlock.height &&
+      playerX <= collisionBlock.position.x + collisionBlock.width &&
+      playerX + playerWidth >= collisionBlock.position.x
+    );
+  }
+  platformCollision(collisionBlock, playerX, playerY, playerWidth, playerHeight) {
+    return (
+      playerY + playerHeight >= collisionBlock.position.y &&
+      playerY + playerHeight <=
+        collisionBlock.position.y + collisionBlock.height &&
       playerX <= collisionBlock.position.x + collisionBlock.width &&
       playerX + playerWidth >= collisionBlock.position.x
     );

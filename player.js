@@ -67,6 +67,7 @@ export class Player {
     else this.vy = 0;
 
     this.checkForVerticalCollision();
+    this.checkForPlatformVerticalCollision();
 
     if (this.frameTimer > this.frameInterval) {
       this.frameTimer = 0;
@@ -197,7 +198,6 @@ export class Player {
         const blockTop = collisionBlock.position.y;
         const blockBottom = collisionBlock.position.y + collisionBlock.height;
 
-        // Provera da li se sudar dogodio odozdo
         if (
           playerY + playerHeight > blockTop &&
           playerY + playerHeight < blockBottom
@@ -207,7 +207,6 @@ export class Player {
           this.vy = 0;
           collisionFromBelow = true;
         } else if (playerY < blockBottom && playerY > blockTop) {
-          // Sudar odozgo
           this.y = blockBottom - this.height / 3.5;
           this.vy += this.weight;
         }
@@ -216,6 +215,49 @@ export class Player {
 
     if (this.isOnGround && !collisionFromBelow) {
       this.vy = 0;
+    }
+  }
+
+  checkForPlatformVerticalCollision() {
+    let playerX = this.x + this.width / 2.5;
+    let playerY = this.y + this.height / 3.5;
+    let playerWidth = this.width / 5;
+    let playerHeight = this.height / 2.5;
+
+    for (
+      let i = 0;
+      i < this.floorCollisions.platformCollisionBlocks.length;
+      i++
+    ) {
+      const platformCollisionBlock =
+        this.floorCollisions.platformCollisionBlocks[i];
+
+      if (
+        this.collision(
+          platformCollisionBlock,
+          playerX,
+          playerY,
+          playerWidth,
+          playerHeight
+        )
+      ) {
+         const blockTop = platformCollisionBlock.position.y;
+         const blockLeft = platformCollisionBlock.position.x;
+         const blockRight =
+           platformCollisionBlock.position.x + platformCollisionBlock.width;
+
+         if (
+           playerY + playerHeight > blockTop &&
+           playerY < blockTop &&
+           playerX + playerWidth > blockLeft &&
+           playerX < blockRight &&
+           this.vy >= 0
+         ) {
+           this.y = blockTop - (this.height / 3.5 + playerHeight + 0.01);
+           this.isOnGround = true;
+           this.vy = 0;
+         }
+      }
     }
   }
 

@@ -1,7 +1,7 @@
 import { Idle, Running, Jumping, Falling, Shooting, RunningShooting } from "./playerStates.js";
 
 export class Player {
-  constructor(game, floorCollisions) {
+  constructor(game, floorCollisions, background) {
     this.game = game;
     this.spriteWidth = 48;
     this.spriteHeight = 48;
@@ -31,8 +31,10 @@ export class Player {
     ];
     this.currentState = this.states[0];
     this.currentState.enter();
+    this.background = background;
     this.floorCollisions = floorCollisions;
     this.isOnGround = false;
+    this.cameraOffset = { x: 0, y: 0 };
   }
   update(input, deltaTime) {
     this.currentState.handleInput(input);
@@ -77,10 +79,7 @@ export class Player {
     this.checkForVerticalCollision();
     this.checkForPlatformVerticalCollision();
 
-    if (
-      this.vy > 2 &&
-      !(this.currentState instanceof Falling)
-    ) {
+    if (this.vy > 2 && !(this.currentState instanceof Falling)) {
       this.setState(3);
     }
 
@@ -98,13 +97,31 @@ export class Player {
     } else {
       this.frameTimer += deltaTime;
     }
+    if (this.cameraBox.position.x + this.cameraBox.width >= this.game.width) {
+      const distanceToMove = this.speed * deltaTime * 0.01;
 
-    if(this.cameraBox.position.x + this.cameraBox.width >= canvas.width){
-      console.log('dawdaw')
+      if (this.speed > 0) {
+        this.moveSceneObjects(-distanceToMove);
+      }
     }
   }
 
+  moveSceneObjects(distance) {
+    this.x += distance;
+
+    this.background.layer1.x += distance;
+    this.floorCollisions.collisionBlocks.forEach((block) => {
+      block.position.x += distance;
+    });
+
+    this.floorCollisions.platformCollisionBlocks.forEach((block) => {
+      block.position.x += distance;
+    });
+  }
+
   draw(context) {
+    context.translate(this.cameraOffset.x, this.cameraOffset.y);
+
     context.imageSmoothingEnabled = false;
     context.webkitImageSmoothingEnabled = false;
     context.mozImageSmoothingEnabled = false;
@@ -144,7 +161,7 @@ export class Player {
       this.width / 5,
       this.height / 2.5
     );
-    context.fillStyle = 'rgba(0, 0, 255, 0.4)'
+    context.fillStyle = "rgba(0, 0, 255, 0.4)";
     context.fillRect(
       this.cameraBox.position.x,
       this.cameraBox.position.y,
@@ -281,9 +298,9 @@ export class Player {
           this.y = blockTop - (this.height / 3.5 + playerHeight) - 0.01;
           this.isOnGround = true;
           this.vy = 0;
-           if (this.currentState instanceof Jumping) {
-             this.setState(0);
-           }
+          if (this.currentState instanceof Jumping) {
+            this.setState(0);
+          }
         }
       }
     }
@@ -297,7 +314,13 @@ export class Player {
       playerX + playerWidth >= collisionBlock.position.x
     );
   }
-  platformCollision(collisionBlock, playerX, playerY, playerWidth, playerHeight) {
+  platformCollision(
+    collisionBlock,
+    playerX,
+    playerY,
+    playerWidth,
+    playerHeight
+  ) {
     return (
       playerY + playerHeight >= collisionBlock.position.y &&
       playerY + playerHeight <=

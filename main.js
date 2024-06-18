@@ -15,7 +15,7 @@ window.addEventListener('load', function(){
         this.height = height;
         this.background = new Background(this);
         this.floorCollisions = new FloorCollisions();
-        this.player = new Player(this, this.floorCollisions);
+        this.player = new Player(this, this.floorCollisions, this.background);
         this.input = new InputHandler();
       }
       update(deltaTime) {

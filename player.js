@@ -103,6 +103,12 @@ export class Player {
       if (this.speed > 0) {
         this.moveSceneObjects(-distanceToMove);
       }
+    } else if (this.cameraBox.position.x <= 0) {
+      const distanceToMove = this.speed * deltaTime * 0.01;
+
+      if (this.speed < 0) {
+        this.moveSceneObjects(-distanceToMove);
+      }
     }
   }
 

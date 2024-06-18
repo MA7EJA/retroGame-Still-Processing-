@@ -37,6 +37,14 @@ export class Player {
   update(input, deltaTime) {
     this.currentState.handleInput(input);
     this.x += this.speed * deltaTime * 0.01;
+    this.cameraBox = {
+      position: {
+        x: this.x - this.width * 1.4,
+        y: this.y - this.height / 1.4,
+      },
+      width: 360,
+      height: 220,
+    };
 
     if (this.currentState instanceof Shooting) {
       this.speed = 0;
@@ -90,7 +98,12 @@ export class Player {
     } else {
       this.frameTimer += deltaTime;
     }
+
+    if(this.cameraBox.position.x + this.cameraBox.width >= canvas.width){
+      console.log('dawdaw')
+    }
   }
+
   draw(context) {
     context.imageSmoothingEnabled = false;
     context.webkitImageSmoothingEnabled = false;
@@ -130,6 +143,13 @@ export class Player {
       this.y + this.height / 3.5,
       this.width / 5,
       this.height / 2.5
+    );
+    context.fillStyle = 'rgba(0, 0, 255, 0.4)'
+    context.fillRect(
+      this.cameraBox.position.x,
+      this.cameraBox.position.y,
+      this.cameraBox.width,
+      this.cameraBox.height
     );
   }
   setState(state) {

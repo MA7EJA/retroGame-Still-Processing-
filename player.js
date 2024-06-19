@@ -97,32 +97,44 @@ export class Player {
     } else {
       this.frameTimer += deltaTime;
     }
-    if (this.cameraBox.position.x + this.cameraBox.width >= this.game.width) {
-      const distanceToMove = this.speed * deltaTime * 0.01;
+     const cameraBoxRight = this.cameraBox.position.x + this.cameraBox.width;
+     const cameraBoxLeft = this.cameraBox.position.x;
+     const backgroundRight =
+       this.background.layer1.x + this.background.layer1.width;
+     const backgroundLeft = this.background.layer1.x;
 
-      if (this.speed > 0) {
-        this.moveSceneObjects(-distanceToMove);
-      }
-    } else if (this.cameraBox.position.x <= 0) {
-      const distanceToMove = this.speed * deltaTime * 0.01;
+     const distanceToMove = this.speed * deltaTime * 0.01;
 
-      if (this.speed < 0) {
-        this.moveSceneObjects(-distanceToMove);
-      }
-    }
+     if (cameraBoxRight >= this.game.width + 0.1) {
+       if (this.speed >= 0) {
+         if (cameraBoxRight <= backgroundRight) {
+           this.moveSceneObjects(-distanceToMove);
+         }
+       }
+     } else if (this.cameraBox.position.x <= 0) {
+       if (this.speed < 0) {
+         if (cameraBoxLeft >= backgroundLeft) {
+           this.moveSceneObjects(-distanceToMove);
+         }
+       }
+     }
   }
 
   moveSceneObjects(distance) {
     this.x += distance;
-
-    this.background.layer1.x += distance;
-    this.floorCollisions.collisionBlocks.forEach((block) => {
-      block.position.x += distance;
-    });
-
-    this.floorCollisions.platformCollisionBlocks.forEach((block) => {
-      block.position.x += distance;
-    });
+    if (
+      this.background.layer1.x + distance <= 0 &&
+      this.background.layer1.x + distance >=
+        -(this.background.layer1.width - this.game.width)
+    ) {
+      this.background.layer1.x += distance;
+      this.floorCollisions.collisionBlocks.forEach((block) => {
+        block.position.x += distance;
+      });
+      this.floorCollisions.platformCollisionBlocks.forEach((block) => {
+        block.position.x += distance;
+      });
+    }
   }
 
   draw(context) {

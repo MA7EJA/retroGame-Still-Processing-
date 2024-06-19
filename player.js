@@ -105,7 +105,7 @@ export class Player {
 
      const distanceToMove = this.speed * deltaTime * 0.01;
 
-     if (cameraBoxRight >= this.game.width + 0.1) {
+     if (cameraBoxRight >= this.game.width + 1) {
        if (this.speed >= 0) {
          if (cameraBoxRight <= backgroundRight) {
            this.moveSceneObjects(-distanceToMove);

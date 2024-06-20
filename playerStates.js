@@ -108,7 +108,7 @@ export class Falling extends State {
 }
 
 export class Shooting extends State {
-  constructor(player, speed) {
+  constructor(player) {
     super("Shooting");
     this.player = player;
   }
@@ -122,9 +122,30 @@ export class Shooting extends State {
     if (this.player.frameX >= this.player.maxFrame && !input.includes("x")) {
       this.player.setState(states.IDLE);
       this.loop = false;
-    }else{
+    } else {
       this.loop = true;
     }
+
+    if (this.player.frameX === 2 && !this.bulletCreated) {
+      this.createBullet();
+      this.bulletCreated = true;
+    }
+
+    if (this.player.frameX === 0 || this.player.frameX > 2) {
+      this.bulletCreated = false;
+    }
+  }
+  createBullet() {
+    const bulletX = this.player.facingRight
+      ? this.player.x + this.player.width / 1.5
+      : this.player.x + this.player.width / 2.5;
+
+    const bullet = new this.player.Bullet(
+      bulletX,
+      this.player.y + this.player.height / 2.5,
+      this.player.facingRight ? 1 : -1
+    );
+    this.player.bullets.push(bullet);
   }
 }
 

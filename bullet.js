@@ -4,7 +4,7 @@ export class Bullet {
     this.y = y;
     this.width = 10;
     this.height = 5;
-    this.speed = 10;
+    this.speed = 60;
     this.direction = direction;
   }
 

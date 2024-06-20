@@ -1,4 +1,5 @@
 import { Idle, Running, Jumping, Falling, Shooting, RunningShooting } from "./playerStates.js";
+import { Bullet } from "./bullet.js";
 
 export class Player {
   constructor(game, floorCollisions, background) {
@@ -21,6 +22,8 @@ export class Player {
     this.speed = 0;
     this.maxSpeed = 18;
     this.facingRight = true;
+    this.Bullet = Bullet;
+    this.bullets = [];
     this.states = [
       new Idle(this),
       new Running(this),
@@ -65,6 +68,7 @@ export class Player {
           break;
       }
     }
+    this.updateBullets(deltaTime);
 
     this.checkForHorizontalCollision();
 
@@ -97,27 +101,27 @@ export class Player {
     } else {
       this.frameTimer += deltaTime;
     }
-     const cameraBoxRight = this.cameraBox.position.x + this.cameraBox.width;
-     const cameraBoxLeft = this.cameraBox.position.x;
-     const backgroundRight =
-       this.background.layer1.x + this.background.layer1.width;
-     const backgroundLeft = this.background.layer1.x;
+    const cameraBoxRight = this.cameraBox.position.x + this.cameraBox.width;
+    const cameraBoxLeft = this.cameraBox.position.x;
+    const backgroundRight =
+      this.background.layer1.x + this.background.layer1.width;
+    const backgroundLeft = this.background.layer1.x;
 
-     const distanceToMove = this.speed * deltaTime * 0.01;
+    const distanceToMove = this.speed * deltaTime * 0.01;
 
-     if (cameraBoxRight >= this.game.width + 1) {
-       if (this.speed >= 0) {
-         if (cameraBoxRight <= backgroundRight) {
-           this.moveSceneObjects(-distanceToMove);
-         }
-       }
-     } else if (this.cameraBox.position.x <= 0) {
-       if (this.speed < 0) {
-         if (cameraBoxLeft >= backgroundLeft) {
-           this.moveSceneObjects(-distanceToMove);
-         }
-       }
-     }
+    if (cameraBoxRight >= this.game.width + 1) {
+      if (this.speed >= 0) {
+        if (cameraBoxRight <= backgroundRight) {
+          this.moveSceneObjects(-distanceToMove);
+        }
+      }
+    } else if (this.cameraBox.position.x <= 0) {
+      if (this.speed < 0) {
+        if (cameraBoxLeft >= backgroundLeft) {
+          this.moveSceneObjects(-distanceToMove);
+        }
+      }
+    }
   }
 
   moveSceneObjects(distance) {
@@ -135,6 +139,16 @@ export class Player {
         block.position.x += distance;
       });
     }
+  }
+
+  updateBullets(deltaTime) {
+    this.bullets.forEach((bullet, index) => {
+      bullet.update(deltaTime);
+      
+      if (bullet.x < 0 || bullet.x > this.game.width) {
+        this.bullets.splice(index, 1);
+      }
+    });
   }
 
   draw(context) {
@@ -186,6 +200,9 @@ export class Player {
       this.cameraBox.width,
       this.cameraBox.height
     );
+    this.bullets.forEach((bullet) => {
+      bullet.draw(context);
+    });
   }
   setState(state) {
     this.currentState = this.states[state];

@@ -174,5 +174,25 @@ export class RunningShooting extends State {
     ) {
       this.player.setState(states.SHOOTING);
     }
+    if (this.player.frameX === 4 && !this.bulletCreated) {
+      this.createBullet();
+      this.bulletCreated = true;
+    }
+
+    if (this.player.frameX === 0 || this.player.frameX > 4) {
+      this.bulletCreated = false;
+    }
+  }
+  createBullet() {
+    const bulletX = this.player.facingRight
+      ? this.player.x + this.player.width / 1.5
+      : this.player.x + this.player.width / 2.5;
+
+    const bullet = new this.player.Bullet(
+      bulletX,
+      this.player.y + this.player.height / 2.5,
+      this.player.facingRight ? 1 : -1
+    );
+    this.player.bullets.push(bullet);
   }
 }

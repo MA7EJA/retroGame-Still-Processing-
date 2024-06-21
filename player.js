@@ -68,7 +68,10 @@ export class Player {
           break;
       }
     }
-    this.updateBullets(deltaTime);
+     this.bullets.forEach((bullet) => bullet.update(deltaTime));
+     this.bullets = this.bullets.filter(
+       (bullet) => bullet.x > 0 && bullet.x < this.game.width
+     );
 
     this.checkForHorizontalCollision();
 
@@ -200,9 +203,7 @@ export class Player {
       this.cameraBox.width,
       this.cameraBox.height
     );
-    this.bullets.forEach((bullet) => {
-      bullet.draw(context);
-    });
+    this.bullets.forEach((bullet) => bullet.draw(context));
   }
   setState(state) {
     this.currentState = this.states[state];

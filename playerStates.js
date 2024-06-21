@@ -179,7 +179,11 @@ export class CreateBulletAction {
   constructor(player) {
     this.player = player;
   }
-
+  enter() {
+    this.player.bulletFrameX = 0;
+    this.player.bulletMaxFrame = 7;
+    this.loop = false;
+  }
   execute() {
     const bulletX = this.player.facingRight
       ? this.player.x + this.player.width / 1.5

@@ -186,12 +186,12 @@ export class CreateBulletAction {
   }
   execute() {
     const bulletX = this.player.facingRight
-      ? this.player.x + this.player.width / 1.5
-      : this.player.x + this.player.width / 2.5;
+      ? this.player.x + this.player.width / 2.5
+      : this.player.x;
 
     const bullet = new this.player.Bullet(
       bulletX,
-      this.player.y + this.player.height / 2.5,
+      this.player.y,
       this.player.facingRight ? 1 : -1
     );
     this.player.bullets.push(bullet);

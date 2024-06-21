@@ -8,7 +8,7 @@ export class Bullet {
     this.spriteHeight = 32;
     this.frameX = 0;
     this.frameY = 0;
-    this.maxFrame = 3; 
+    this.maxFrame = 2; 
     this.speed = 60;
     this.direction = direction;
     this.image = document.getElementById("playerBullet");

@@ -111,6 +111,7 @@ export class Shooting extends State {
   constructor(player) {
     super("Shooting");
     this.player = player;
+    this.createBulletAction = new CreateBulletAction(player);
   }
   enter() {
     this.player.frameX = 0;
@@ -127,7 +128,7 @@ export class Shooting extends State {
     }
 
     if (this.player.frameX === 2 && !this.bulletCreated) {
-      this.createBullet();
+      this.createBulletAction.execute();
       this.bulletCreated = true;
     }
 
@@ -135,24 +136,13 @@ export class Shooting extends State {
       this.bulletCreated = false;
     }
   }
-  createBullet() {
-    const bulletX = this.player.facingRight
-      ? this.player.x + this.player.width / 1.5
-      : this.player.x + this.player.width / 2.5;
-
-    const bullet = new this.player.Bullet(
-      bulletX,
-      this.player.y + this.player.height / 2.5,
-      this.player.facingRight ? 1 : -1
-    );
-    this.player.bullets.push(bullet);
-  }
 }
 
 export class RunningShooting extends State {
   constructor(player) {
     super("RunningShooting");
     this.player = player;
+    this.createBulletAction = new CreateBulletAction(player);
   }
   enter() {
     this.player.frameX = 0;
@@ -175,7 +165,7 @@ export class RunningShooting extends State {
       this.player.setState(states.SHOOTING);
     }
     if (this.player.frameX === 4 && !this.bulletCreated) {
-      this.createBullet();
+      this.createBulletAction.execute();
       this.bulletCreated = true;
     }
 
@@ -183,7 +173,14 @@ export class RunningShooting extends State {
       this.bulletCreated = false;
     }
   }
-  createBullet() {
+}
+
+export class CreateBulletAction {
+  constructor(player) {
+    this.player = player;
+  }
+
+  execute() {
     const bulletX = this.player.facingRight
       ? this.player.x + this.player.width / 1.5
       : this.player.x + this.player.width / 2.5;

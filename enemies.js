@@ -33,6 +33,10 @@ export class SnakeEnemy {
     this.player = player;
     this.x = 0;
     this.y = 0;
+    this.spriteWidth = 64;
+    this.spriteHeight = 64;
+    this.frameX = 0;
+    this.frameY = 0;
     this.width = 64;
     this.height = 64;
     this.speed = 3;
@@ -40,14 +44,32 @@ export class SnakeEnemy {
     this.states = [new Idle(this), new Walking(this), new Attacking(this)];
     this.currentState = this.states[0];
     this.currentState.enter();
+    this.image = document.getElementById("snakeEnemy");
   }
 
   update(deltaTime) {
     this.currentState.update(deltaTime);
+    this.x += this.speed * this.direction * deltaTime * 0.01;
+    this.frameTimer += deltaTime;
   }
 
   draw(context) {
+    context.imageSmoothingEnabled = false;
+    context.webkitImageSmoothingEnabled = false;
+    context.mozImageSmoothingEnabled = false;
+    context.msImageSmoothingEnabled = false;
     this.currentState.draw(context);
+    context.drawImage(
+      this.image,
+      this.frameX * this.spriteWidth,
+      this.frameY * this.spriteHeight,
+      this.spriteWidth,
+      this.spriteHeight,
+      0,
+      0,
+      this.width,
+      this.height
+    );
   }
 
   setState(state) {

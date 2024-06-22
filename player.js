@@ -118,7 +118,7 @@ export class Player {
           this.moveSceneObjects(-distanceToMove);
         }
       }
-    } else if (this.cameraBox.position.x <= 0) {
+    } else if (this.cameraBox.position.x <= -1) {
       if (this.speed < 0) {
         if (cameraBoxLeft >= backgroundLeft) {
           this.moveSceneObjects(-distanceToMove);

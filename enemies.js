@@ -27,8 +27,33 @@ class SpiderEnemy extends Enemy{
     }
 }
 
-class SnakeEnemy extends Enemy{
+export class SnakeEnemy {
+  constructor(game, player) {
+    this.game = game;
+    this.player = player;
+    this.x = 0;
+    this.y = 0;
+    this.width = 64;
+    this.height = 64;
+    this.speed = 3;
+    this.direction = 1;
+    this.states = [new Idle(this), new Walking(this), new Attacking(this)];
+    this.currentState = this.states[0];
+    this.currentState.enter();
+  }
 
+  update(deltaTime) {
+    this.currentState.update(deltaTime);
+  }
+
+  draw(context) {
+    this.currentState.draw(context);
+  }
+
+  setState(state) {
+    this.currentState = this.states[state];
+    this.currentState.enter();
+  }
 }
 
 class OctopusEnemy extends Enemy{

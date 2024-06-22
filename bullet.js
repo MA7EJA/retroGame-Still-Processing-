@@ -8,11 +8,11 @@ export class Bullet {
     this.spriteHeight = 32;
     this.frameX = 0;
     this.frameY = 0;
-    this.maxFrame = 2; 
+    this.maxFrame = 2;
     this.speed = 60;
     this.direction = direction;
     this.image = document.getElementById("playerBullet");
-    this.frameInterval = 100; 
+    this.frameInterval = 100;
     this.frameTimer = 0;
   }
 
@@ -30,23 +30,52 @@ export class Bullet {
     context.webkitImageSmoothingEnabled = false;
     context.mozImageSmoothingEnabled = false;
     context.msImageSmoothingEnabled = false;
-    context.fillStyle = "red";
-    context.fillRect(
-      this.x + this.width / 2,
-      this.y + this.height / 1.7,
-      this.width / 4,
-      this.height / 6
-    );
-    context.drawImage(
-      this.image,
-      this.frameX * this.spriteWidth,
-      this.frameY * this.spriteHeight,
-      this.spriteWidth,
-      this.spriteHeight,
-      this.x,
-      this.y,
-      this.width,
-      this.height
-    );
+
+    if (this.direction === -1) {
+      context.save();
+      context.translate(this.x + this.width, this.y);
+      context.scale(-1, 1);
+
+      context.fillStyle = "red";
+      context.fillRect(
+        this.width / 2,
+        this.height / 1.7,
+        this.width / 4,
+        this.height / 6
+      );
+
+      context.drawImage(
+        this.image,
+        this.frameX * this.spriteWidth,
+        this.frameY * this.spriteHeight,
+        this.spriteWidth,
+        this.spriteHeight,
+        0,
+        0,
+        this.width,
+        this.height
+      );
+      context.restore();
+    } else {
+      context.fillStyle = "red";
+      context.fillRect(
+        this.x + this.width / 2,
+        this.y + this.height / 1.7,
+        this.width / 4,
+        this.height / 6
+      );
+
+      context.drawImage(
+        this.image,
+        this.frameX * this.spriteWidth,
+        this.frameY * this.spriteHeight,
+        this.spriteWidth,
+        this.spriteHeight,
+        this.x,
+        this.y,
+        this.width,
+        this.height
+      );
+    }
   }
 }

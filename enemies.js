@@ -1,30 +1,28 @@
+import { states, Idle, Running, Attacking } from "./snakeEnemyStates.js";
+
 class Enemy {
-    constructor(){
-        this.frameX = 0;
-        this.frameY = 0;
-        this.fps = 15;
-        this.frameINterval = 1000 / this.fps;
-        this.frameTimer = 0;
-    }
-    update(){
-
-    }
-    draw(){
-
-    }
+  constructor() {
+    this.frameX = 0;
+    this.frameY = 0;
+    this.fps = 15;
+    this.frameINterval = 1000 / this.fps;
+    this.frameTimer = 0;
+  }
+  update() {}
+  draw() {}
 }
 
-class SpiderEnemy extends Enemy{
-    constructor(game){
-        super();
-        this.game = game;
-        this.width = 48;
-        this.height = 48;
-        this.x = 200;
-        this.y = 200;
-        this.speedX = 2;
-        this.maxFrame;
-    }
+class SpiderEnemy extends Enemy {
+  constructor(game) {
+    super();
+    this.game = game;
+    this.width = 48;
+    this.height = 48;
+    this.x = 200;
+    this.y = 200;
+    this.speedX = 2;
+    this.maxFrame;
+  }
 }
 
 export class SnakeEnemy {
@@ -41,7 +39,7 @@ export class SnakeEnemy {
     this.height = 64;
     this.speed = 3;
     this.direction = 1;
-    this.states = [new Idle(this), new Walking(this), new Attacking(this)];
+    this.states = [new Idle(this), new Running(this), new Attacking(this)];
     this.currentState = this.states[0];
     this.currentState.enter();
     this.image = document.getElementById("snakeEnemy");
@@ -78,6 +76,4 @@ export class SnakeEnemy {
   }
 }
 
-class OctopusEnemy extends Enemy{
-
-}
+class OctopusEnemy extends Enemy {}

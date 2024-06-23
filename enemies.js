@@ -39,32 +39,38 @@ export class SnakeEnemy {
     this.height = 64;
     this.speed = 3;
     this.direction = 1;
+    this.walkDistance = 100;
+    this.distance = 0;
     this.states = [new Idle(this), new Running(this), new Attacking(this)];
-    this.currentState = this.states[0];
+    this.currentState = this.states[states.RUNNING]; // Initial state set to RUNNING
     this.currentState.enter();
     this.image = document.getElementById("snakeEnemy");
   }
 
   update(deltaTime) {
-    this.currentState.update(deltaTime);
+    if (this.currentState) {
+      this.currentState.update(deltaTime);
+    }
     this.x += this.speed * this.direction * deltaTime * 0.01;
     this.frameTimer += deltaTime;
   }
 
   draw(context) {
+    if (this.currentState) {
+      this.currentState.draw(context);
+    }
     context.imageSmoothingEnabled = false;
     context.webkitImageSmoothingEnabled = false;
     context.mozImageSmoothingEnabled = false;
     context.msImageSmoothingEnabled = false;
-    this.currentState.draw(context);
     context.drawImage(
       this.image,
       this.frameX * this.spriteWidth,
       this.frameY * this.spriteHeight,
       this.spriteWidth,
       this.spriteHeight,
-      0,
-      0,
+      this.x,
+      this.y,
       this.width,
       this.height
     );
@@ -75,5 +81,6 @@ export class SnakeEnemy {
     this.currentState.enter();
   }
 }
+
 
 class OctopusEnemy extends Enemy {}

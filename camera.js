@@ -1,11 +1,12 @@
 export class Camera {
-  constructor(gameWidth, gameHeight, background, floorCollisions) {
+  constructor(gameWidth, gameHeight, background, floorCollisions, enemies) {
     this.x = 0;
     this.y = 0;
     this.gameWidth = gameWidth;
     this.gameHeight = gameHeight;
     this.background = background;
     this.floorCollisions = floorCollisions;
+    this.enemies = [];
     this.cameraBox = {
       position: {
         x: 0,
@@ -37,6 +38,7 @@ export class Camera {
           );
           this.moveSceneObjects(-effectiveDistance);
           player.x -= effectiveDistance;
+          this.enemies.forEach((enemy) => (enemy.x -= effectiveDistance));
         }
       }
     } else if (this.cameraBox.position.x < -2) {
@@ -48,6 +50,7 @@ export class Camera {
           );
           this.moveSceneObjects(-effectiveDistance);
           player.x -= effectiveDistance;
+          this.enemies.forEach((enemy) => (enemy.x -= effectiveDistance));
         }
       }
     }
@@ -115,6 +118,16 @@ export class Camera {
       this.cameraBox.width,
       this.cameraBox.height
     );
+    this.enemies.forEach((enemy) => {
+      context.drawImage(
+        enemy.image,
+        enemy.x - this.x,
+        enemy.y - this.y,
+        enemy.width,
+        enemy.height
+      );
+      //
+    });
     player.bullets.forEach((bullet) => bullet.draw(context));
   }
 }

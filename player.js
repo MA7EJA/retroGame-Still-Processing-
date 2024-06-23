@@ -2,7 +2,7 @@ import { Idle, Running, Jumping, Falling, Shooting, RunningShooting } from "./pl
 import { Bullet } from "./bullet.js";
 
 export class Player {
-  constructor(game, floorCollisions, background, camera) {
+  constructor(game, floorCollisions, background) {
     this.game = game;
     this.spriteWidth = 48;
     this.spriteHeight = 48;
@@ -37,7 +37,6 @@ export class Player {
     this.background = background;
     this.floorCollisions = floorCollisions;
     this.isOnGround = false;
-    this.camera = camera;
   }
   update(input, deltaTime) {
     this.currentState.handleInput(input);
@@ -60,7 +59,6 @@ export class Player {
       }
     }
     this.x += this.speed * deltaTime * 0.01;
-    this.camera.update(this.x, this.game.width);
     
      this.bullets.forEach((bullet) => bullet.update(deltaTime));
      this.bullets = this.bullets.filter(
@@ -111,7 +109,6 @@ export class Player {
   }
 
   draw(context) {
-    this.camera.draw(context, this);
 
     context.imageSmoothingEnabled = false;
     context.webkitImageSmoothingEnabled = false;

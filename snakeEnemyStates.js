@@ -11,11 +11,9 @@ class State {
   }
 
   update(deltaTime) {
-    // Default update method
   }
 
   draw(context) {
-    // Default draw method
   }
 }
 
@@ -30,7 +28,6 @@ export class Idle extends State {
   update(deltaTime) {}
 
   draw(context) {
-    // Optionally implement specific draw logic for Idle state
   }
 
   handleInput(input) {}
@@ -55,21 +52,20 @@ export class Running extends State {
     this.enemy.x += this.enemy.speed * this.enemy.direction * deltaTime * 0.01;
 
     if (this.enemy.x <= 0) {
-      this.enemy.direction = 1; // Change direction to right
+      this.enemy.direction = 1;
     } else if (this.enemy.x + this.enemy.width >= this.enemy.game.width) {
-      this.enemy.direction = -1; // Change direction to left
+      this.enemy.direction = -1;
     }
 
     this.distance += Math.abs(this.enemy.speed * deltaTime * 0.01);
 
     if (this.distance >= this.walkDistance) {
-      this.enemy.direction *= -1; // Reverse direction
-      this.distance = 0; // Reset distance
+      this.enemy.direction *= -1;
+      this.distance = 0;
     }
   }
 
   draw(context) {
-    // Optionally implement specific draw logic for Running state
   }
 
   handleInput(input) {}
@@ -86,7 +82,6 @@ export class Attacking extends State {
   update(deltaTime) {}
 
   draw(context) {
-    // Optionally implement specific draw logic for Attacking state
   }
 
   handleInput(input) {}

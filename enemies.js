@@ -42,7 +42,7 @@ export class SnakeEnemy {
     this.walkDistance = 100;
     this.distance = 0;
     this.states = [new Idle(this), new Running(this), new Attacking(this)];
-    this.currentState = this.states[states.RUNNING]; // Initial state set to RUNNING
+    this.currentState = this.states[states.RUNNING];
     this.currentState.enter();
     this.image = document.getElementById("snakeEnemy");
   }

@@ -17,24 +17,27 @@ window.addEventListener("load", function () {
       this.height = height;
       this.background = new Background(this);
       this.floorCollisions = new FloorCollisions();
-      this.camera = new Camera(
-        this.width,
-        this.height,
-        this.background,
-        this.floorCollisions
-      );
       this.player = new Player(
         this,
         this.floorCollisions,
         this.background,
         this.camera
       );
-      this.input = new InputHandler();
       this.enemies = [new SnakeEnemy(this, this.player)];
+      this.camera = new Camera(
+        this.width,
+        this.height,
+        this.background,
+        this.floorCollisions,
+        this.enemies
+      );
+      this.player.camera = this.camera;
+      this.camera.enemies = this.enemies;
+      this.input = new InputHandler();
     }
 
     update(deltaTime) {
-      this.background.update(); // Update background if needed
+      this.background.update();
       this.camera.update(this.player, deltaTime);
       this.player.update(this.input.keys, deltaTime);
       this.enemies.forEach((enemy) => enemy.update(deltaTime));

@@ -10,11 +10,9 @@ class State {
     this.loop = true;
   }
 
-  update(deltaTime) {
-  }
+  update(deltaTime) {}
 
-  draw(context) {
-  }
+  draw(context) {}
 }
 
 export class Idle extends State {
@@ -27,8 +25,7 @@ export class Idle extends State {
 
   update(deltaTime) {}
 
-  draw(context) {
-  }
+  draw(context) {}
 
   handleInput(input) {}
 }
@@ -65,8 +62,7 @@ export class Running extends State {
     }
   }
 
-  draw(context) {
-  }
+  draw(context) {}
 
   handleInput(input) {}
 }
@@ -81,8 +77,7 @@ export class Attacking extends State {
 
   update(deltaTime) {}
 
-  draw(context) {
-  }
+  draw(context) {}
 
   handleInput(input) {}
 }

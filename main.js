@@ -2,6 +2,7 @@ import { Player } from './player.js'
 import { InputHandler } from './input.js';
 import { Background } from './background.js';
 import { FloorCollisions } from "./collisions.js";
+import { Camera } from "./camera.js";
 import { SnakeEnemy } from './enemies.js';
 
 window.addEventListener('load', function(){

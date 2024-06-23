@@ -2,7 +2,7 @@ import { Idle, Running, Jumping, Falling, Shooting, RunningShooting } from "./pl
 import { Bullet } from "./bullet.js";
 
 export class Player {
-  constructor(game, floorCollisions, background) {
+  constructor(game, floorCollisions, background, camera) {
     this.game = game;
     this.spriteWidth = 48;
     this.spriteHeight = 48;
@@ -37,19 +37,10 @@ export class Player {
     this.background = background;
     this.floorCollisions = floorCollisions;
     this.isOnGround = false;
-    this.cameraOffset = { x: 0, y: 0 };
+    this.camera = camera;
   }
   update(input, deltaTime) {
     this.currentState.handleInput(input);
-    this.x += this.speed * deltaTime * 0.01;
-    this.cameraBox = {
-      position: {
-        x: this.x - this.width * 1.4,
-        y: this.y - this.height / 1.4,
-      },
-      width: 360,
-      height: 220,
-    };
 
     if (this.currentState instanceof Shooting) {
       this.speed = 0;
@@ -68,6 +59,9 @@ export class Player {
           break;
       }
     }
+    this.x += this.speed * deltaTime * 0.01;
+    this.camera.update(this.x, this.game.width);
+    
      this.bullets.forEach((bullet) => bullet.update(deltaTime));
      this.bullets = this.bullets.filter(
        (bullet) => bullet.x > 0 && bullet.x < this.game.width
@@ -104,44 +98,6 @@ export class Player {
     } else {
       this.frameTimer += deltaTime;
     }
-    const cameraBoxRight = this.cameraBox.position.x + this.cameraBox.width;
-    const cameraBoxLeft = this.cameraBox.position.x;
-    const backgroundRight =
-      this.background.layer1.x + this.background.layer1.width;
-    const backgroundLeft = this.background.layer1.x;
-
-    const distanceToMove = this.speed * deltaTime * 0.01;
-
-    if (cameraBoxRight >= this.game.width + 1) {
-      if (this.speed >= 0) {
-        if (cameraBoxRight <= backgroundRight) {
-          this.moveSceneObjects(-distanceToMove);
-        }
-      }
-    } else if (this.cameraBox.position.x <= -1) {
-      if (this.speed < 0) {
-        if (cameraBoxLeft >= backgroundLeft) {
-          this.moveSceneObjects(-distanceToMove);
-        }
-      }
-    }
-  }
-
-  moveSceneObjects(distance) {
-    this.x += distance;
-    if (
-      this.background.layer1.x + distance <= 0 &&
-      this.background.layer1.x + distance >=
-        -(this.background.layer1.width - this.game.width)
-    ) {
-      this.background.layer1.x += distance;
-      this.floorCollisions.collisionBlocks.forEach((block) => {
-        block.position.x += distance;
-      });
-      this.floorCollisions.platformCollisionBlocks.forEach((block) => {
-        block.position.x += distance;
-      });
-    }
   }
 
   updateBullets(deltaTime) {
@@ -155,7 +111,7 @@ export class Player {
   }
 
   draw(context) {
-    context.translate(this.cameraOffset.x, this.cameraOffset.y);
+    this.camera.draw(context, this);
 
     context.imageSmoothingEnabled = false;
     context.webkitImageSmoothingEnabled = false;
@@ -195,13 +151,6 @@ export class Player {
       this.y + this.height / 3.5,
       this.width / 5,
       this.height / 2.5
-    );
-    context.fillStyle = "rgba(0, 0, 255, 0.4)";
-    context.fillRect(
-      this.cameraBox.position.x,
-      this.cameraBox.position.y,
-      this.cameraBox.width,
-      this.cameraBox.height
     );
     this.bullets.forEach((bullet) => bullet.draw(context));
   }

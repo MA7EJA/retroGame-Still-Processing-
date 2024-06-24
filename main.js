@@ -23,7 +23,7 @@ window.addEventListener("load", function () {
         this.background,
         this.camera
       );
-      this.enemies = [new SnakeEnemy(this, this.player)];
+      this.enemies = [new SnakeEnemy(this, this.player, this.floorCollisions)];
       this.camera = new Camera(
         this.width,
         this.height,

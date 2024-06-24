@@ -1,8 +1,9 @@
 import { states, Idle, Running, Attacking } from "./snakeEnemyStates.js";
 
 class Enemy {
-  constructor(game) {
+  constructor(game, floorCollisions) {
     this.game = game;
+    this.floorCollisions = floorCollisions;
     this.width = 0;
     this.height = 0;
     this.x = 0;
@@ -17,12 +18,21 @@ class Enemy {
     this.frameTimer = 0;
     this.currentState = null;
     this.direction = 1;
+    this.vy = 0;
+    this.weight = 15;
+    this.isOnGround = false;
   }
 
   update(deltaTime) {
     if (this.currentState) {
       this.currentState.update(deltaTime);
     }
+
+    this.y += this.vy * deltaTime * 0.01;
+    if (!this.isOnGround) this.vy += this.weight * deltaTime * 0.01;
+    else this.vy = 0;
+
+    this.checkForVerticalCollision();
   }
 
   draw(context) {
@@ -34,6 +44,51 @@ class Enemy {
   setState(state) {
     this.currentState = state;
     this.currentState.enter();
+  }
+
+  checkForVerticalCollision() {
+    let enemyX = this.x;
+    let enemyY = this.y;
+    let enemyWidth = this.width;
+    let enemyHeight = this.height;
+
+    this.isOnGround = false;
+
+    for (let i = 0; i < this.floorCollisions.collisionBlocks.length; i++) {
+      const collisionBlock = this.floorCollisions.collisionBlocks[i];
+
+      if (
+        this.collision(collisionBlock, enemyX, enemyY, enemyWidth, enemyHeight)
+      ) {
+        const blockTop = collisionBlock.position.y;
+        const blockBottom = collisionBlock.position.y + collisionBlock.height;
+
+        if (
+          enemyY + enemyHeight > blockTop &&
+          enemyY + enemyHeight < blockBottom
+        ) {
+          this.y = blockTop - enemyHeight - 0.01;
+          this.isOnGround = true;
+          this.vy = 0;
+        } else if (enemyY < blockBottom && enemyY > blockTop) {
+          this.y = blockBottom;
+          this.vy += this.weight;
+        }
+      }
+    }
+
+    if (this.isOnGround) {
+      this.vy = 0;
+    }
+  }
+
+  collision(collisionBlock, enemyX, enemyY, enemyWidth, enemyHeight) {
+    return (
+      enemyY + enemyHeight >= collisionBlock.position.y &&
+      enemyY <= collisionBlock.position.y + collisionBlock.height &&
+      enemyX <= collisionBlock.position.x + collisionBlock.width &&
+      enemyX + enemyWidth >= collisionBlock.position.x
+    );
   }
 }
 
@@ -51,8 +106,8 @@ class SpiderEnemy extends Enemy {
 }
 
 export class SnakeEnemy extends Enemy {
-  constructor(game, player) {
-    super(game);
+  constructor(game, player, floorCollisions) {
+    super(game, floorCollisions);
     this.width = 64;
     this.height = 64;
     this.x = 0;
@@ -68,7 +123,7 @@ export class SnakeEnemy extends Enemy {
     };
     this.setState(this.states[states.RUNNING]);
     this.image = document.getElementById("snakeEnemy");
-    this.facingRight = true; 
+    this.facingRight = true;
   }
 
   update(deltaTime) {

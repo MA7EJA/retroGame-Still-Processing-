@@ -82,6 +82,7 @@ export class SnakeEnemy extends Enemy {
     this.direction = 1;
     this.walkDistance = 150;
     this.distance = 0;
+    this.isWaiting = false;
     this.states = {
       [states.IDLE]: new Idle(this),
       [states.RUNNING]: new Running(this),
@@ -96,6 +97,7 @@ export class SnakeEnemy extends Enemy {
 
   update(deltaTime) {
     super.update(deltaTime);
+    if (this.isWaiting) return;
     this.x += this.speed * this.direction * deltaTime * 0.01;
     this.frameTimer += deltaTime;
 
@@ -114,8 +116,13 @@ export class SnakeEnemy extends Enemy {
     this.distance += Math.abs(this.speed * deltaTime * 0.01);
 
     if (this.distance >= this.walkDistance) {
-      this.direction *= -1;
-      this.distance = 0;
+      this.isWaiting = true;
+      const randomPauseTime = Math.random() * 3000 + 3000;
+      setTimeout(() => {
+        this.isWaiting = false;
+        this.direction *= -1;
+        this.distance = 0;
+      }, randomPauseTime);
     }
     if (this.isOnGround && this.currentState !== this.states[states.RUNNING]) {
       this.setState(this.states[states.RUNNING]);
@@ -127,6 +134,9 @@ export class SnakeEnemy extends Enemy {
       this.currentState !== this.states[states.FALLING]
     ) {
       this.setState(this.states[states.FALLING]);
+    }
+    if (this.isWaiting){
+      this.setState(this.states[states.IDLE]);
     }
   }
 

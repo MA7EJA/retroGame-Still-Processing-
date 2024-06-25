@@ -27,6 +27,7 @@ class Enemy {
     if (this.currentState) {
       this.currentState.update(deltaTime);
     }
+    this.checkForHorizontalCollision();
 
     this.y += this.vy * deltaTime * 0.01;
     if (!this.isOnGround) this.vy += this.weight * deltaTime * 0.01;
@@ -74,7 +75,7 @@ export class SnakeEnemy extends Enemy {
     this.speed = 2.5;
     this.weight = 20;
     this.direction = 1;
-    this.walkDistance = 100;
+    this.walkDistance = 150;
     this.distance = 0;
     this.states = {
       [states.IDLE]: new Idle(this),
@@ -88,7 +89,7 @@ export class SnakeEnemy extends Enemy {
 
   update(deltaTime) {
     super.update(deltaTime);
-    if(this.state = states.RUNNING){
+    if (this.currentState === this.states[states.RUNNING]) {
       this.x += this.speed * this.direction * deltaTime * 0.01;
       this.frameTimer += deltaTime;
 
@@ -151,39 +152,89 @@ export class SnakeEnemy extends Enemy {
     context.lineWidth = 2;
     if (this.facingRight) {
       context.strokeRect(
-        this.x - this.width * 0.01,
+        this.x + this.width * 0.1,
         this.y + this.height * 0.25,
-        this.width * 0.7,
-        this.height * 0.55
+        this.width * 0.5,
+        this.height * 0.5
       );
     } else {
       context.save();
       context.translate(this.x + this.width, this.y);
       context.scale(-1, 1);
       context.strokeRect(
-        0 - this.width * 0.01,
+        0 + this.width * 0.1,
         this.height * 0.25,
-        this.width * 0.7,
-        this.height * 0.55
+        this.width * 0.5,
+        this.height * 0.5
       );
       context.restore();
     }
+  }
+  checkForHorizontalCollision() {
+    let enemyX, enemyY, enemyWidth, enemyHeight;
+
+    if (this.facingRight) {
+      enemyX = this.x + this.width * 0.1;
+      enemyY = this.y + this.height * 0.25;
+    } else {
+      enemyX = this.x + this.width - this.width * 0.6;
+      enemyY = this.y + this.height * 0.25;
+    }
+
+    enemyWidth = this.width * 0.5;
+    enemyHeight = this.height * 0.5;
+    
+    let collisionFromLeft = false;
+    let collisionFromRight = false;
+
+    for (let i = 0; i < this.floorCollisions.collisionBlocks.length; i++) {
+      const collisionBlock = this.floorCollisions.collisionBlocks[i];
+
+      if (
+        this.collision(collisionBlock, enemyX, enemyY, enemyWidth, enemyHeight)
+      ) {
+        const blockLeft = collisionBlock.position.x;
+        const blockRight = collisionBlock.position.x + collisionBlock.width;
+
+        if (
+          enemyY + enemyHeight > collisionBlock.position.y &&
+          enemyY < collisionBlock.position.y + collisionBlock.height
+        ) {
+          if (enemyX + enemyWidth > blockLeft && enemyX < blockLeft) {
+            collisionFromLeft = true;
+            this.speed = 0;
+            this.x = blockLeft - (this.width / 2 + enemyWidth + 0.01);
+            this.jump();
+          } else if (
+            enemyX < blockRight &&
+            enemyX + enemyWidth > blockRight
+          ) {
+            collisionFromRight = true;
+            this.x = blockRight - this.width / 2.65;
+            this.speed = 0;
+            this.jump();
+          }
+        }
+      }
+    }
+  }
+  jump(){
+    this.vy = -50;
+    this.speed = 2.5;
   }
   checkForVerticalCollision() {
     let enemyX, enemyY, enemyWidth, enemyHeight;
 
     if (this.facingRight) {
-      enemyX = this.x - this.width * 0.01;
+      enemyX = this.x + this.width * 0.1;
       enemyY = this.y + this.height * 0.25;
-      enemyWidth = this.width * 0.7;
-      enemyHeight = this.height * 0.55;
     } else {
-      // Adjust dimensions and position for left-facing collision detection
-      enemyX = this.x + this.width * 0.3; // Adjust x position
+      enemyX = this.x + this.width - this.width * 0.6;
       enemyY = this.y + this.height * 0.25;
-      enemyWidth = this.width * 0.7;
-      enemyHeight = this.height * 0.55;
     }
+
+    enemyWidth = this.width * 0.5;
+    enemyHeight = this.height * 0.5;
 
     this.isOnGround = false;
 

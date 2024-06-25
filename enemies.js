@@ -1,4 +1,11 @@
-import { states, Idle, Running, Attacking, Jumping } from "./snakeEnemyStates.js";
+import {
+  states,
+  Idle,
+  Running,
+  Attacking,
+  Jumping,
+  Falling,
+} from "./snakeEnemyStates.js";
 
 class Enemy {
   constructor(game, floorCollisions) {
@@ -46,8 +53,6 @@ class Enemy {
     this.currentState = state;
     this.currentState.enter();
   }
-
-  
 }
 
 class SpiderEnemy extends Enemy {
@@ -82,6 +87,7 @@ export class SnakeEnemy extends Enemy {
       [states.RUNNING]: new Running(this),
       [states.ATTACKING]: new Attacking(this),
       [states.JUMPING]: new Jumping(this),
+      [states.FALLING]: new Falling(this),
     };
     this.setState(this.states[states.RUNNING]);
     this.image = document.getElementById("snakeEnemy");
@@ -114,6 +120,13 @@ export class SnakeEnemy extends Enemy {
     if (this.isOnGround && this.currentState !== this.states[states.RUNNING]) {
       this.setState(this.states[states.RUNNING]);
       this.speed = 2.5;
+    }
+    if (
+      !this.isOnGround &&
+      this.vy >= 2 &&
+      this.currentState !== this.states[states.FALLING]
+    ) {
+      this.setState(this.states[states.FALLING]);
     }
   }
 
@@ -186,7 +199,7 @@ export class SnakeEnemy extends Enemy {
 
     enemyWidth = this.width * 0.5;
     enemyHeight = this.height * 0.5;
-    
+
     let collisionFromLeft = false;
     let collisionFromRight = false;
 
@@ -208,10 +221,7 @@ export class SnakeEnemy extends Enemy {
             this.speed = 0;
             this.x = blockLeft - (this.width / 2 + enemyWidth + 0.01);
             this.jump();
-          } else if (
-            enemyX < blockRight &&
-            enemyX + enemyWidth > blockRight
-          ) {
+          } else if (enemyX < blockRight && enemyX + enemyWidth > blockRight) {
             collisionFromRight = true;
             this.x = blockRight - this.width / 2.65;
             this.speed = 0;
@@ -221,7 +231,7 @@ export class SnakeEnemy extends Enemy {
       }
     }
   }
-  jump(){
+  jump() {
     this.setState(this.states[states.JUMPING]);
     this.vy = -60;
     this.speed = 4;
@@ -279,6 +289,5 @@ export class SnakeEnemy extends Enemy {
     );
   }
 }
-
 
 class OctopusEnemy extends Enemy {}

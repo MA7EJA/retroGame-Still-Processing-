@@ -21,11 +21,28 @@ export class Idle extends State {
   constructor(enemy) {
     super("Idle");
     this.enemy = enemy;
+    this.frameInterval = 1000 / 10;
+    this.frameTimer = 0;
   }
 
-  enter() {}
+  enter() {
+    this.enemy.frameX = 0;
+    this.enemy.frameY = 0;
+    this.enemy.maxFrame = 3;
+    this.enemy.loop = true;
+  }
 
-  update(deltaTime) {}
+  update(deltaTime) {
+    this.frameTimer += deltaTime;
+    if (this.frameTimer > this.frameInterval) {
+      this.frameTimer = 0;
+      if (this.enemy.frameX < this.enemy.maxFrame) {
+        this.enemy.frameX++;
+      } else if (this.enemy.loop) {
+        this.enemy.frameX = 0;
+      }
+    }
+  }
 
   draw(context) {}
 

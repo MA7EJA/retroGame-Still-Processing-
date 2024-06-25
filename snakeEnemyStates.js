@@ -34,8 +34,8 @@ export class Running extends State {
   constructor(enemy) {
     super("Running");
     this.enemy = enemy;
-    this.distance = 0;
-    this.walkDistance = 100;
+    this.frameInterval = 1000 / 10;
+    this.frameTimer = 0;
   }
 
   enter() {
@@ -46,19 +46,14 @@ export class Running extends State {
   }
 
   update(deltaTime) {
-    this.enemy.x += this.enemy.speed * this.enemy.direction * deltaTime * 0.01;
-
-    if (this.enemy.x <= 0) {
-      this.enemy.direction = 1;
-    } else if (this.enemy.x + this.enemy.width >= this.enemy.game.width) {
-      this.enemy.direction = -1;
-    }
-
-    this.distance += Math.abs(this.enemy.speed * deltaTime * 0.01);
-
-    if (this.distance >= this.walkDistance) {
-      this.enemy.direction *= -1;
-      this.distance = 0;
+    this.frameTimer += deltaTime;
+    if (this.frameTimer > this.frameInterval) {
+      this.frameTimer = 0;
+      if (this.enemy.frameX < this.enemy.maxFrame) {
+        this.enemy.frameX++;
+      } else if (this.enemy.loop) {
+        this.enemy.frameX = 0;
+      }
     }
   }
 

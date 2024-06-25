@@ -1,4 +1,4 @@
-import { states, Idle, Running, Attacking } from "./snakeEnemyStates.js";
+import { states, Idle, Running, Attacking, Jumping } from "./snakeEnemyStates.js";
 
 class Enemy {
   constructor(game, floorCollisions) {
@@ -81,36 +81,39 @@ export class SnakeEnemy extends Enemy {
       [states.IDLE]: new Idle(this),
       [states.RUNNING]: new Running(this),
       [states.ATTACKING]: new Attacking(this),
+      [states.JUMPING]: new Jumping(this),
     };
     this.setState(this.states[states.RUNNING]);
     this.image = document.getElementById("snakeEnemy");
-    this.facingRight = true;
+    this.isOnGround = false;
   }
 
   update(deltaTime) {
     super.update(deltaTime);
-    if (this.currentState === this.states[states.RUNNING]) {
-      this.x += this.speed * this.direction * deltaTime * 0.01;
-      this.frameTimer += deltaTime;
+    this.x += this.speed * this.direction * deltaTime * 0.01;
+    this.frameTimer += deltaTime;
 
-      if (this.direction === 1 && !this.facingRight) {
-        this.facingRight = true;
-      } else if (this.direction === -1 && this.facingRight) {
-        this.facingRight = false;
-      }
+    if (this.direction === 1 && !this.facingRight) {
+      this.facingRight = true;
+    } else if (this.direction === -1 && this.facingRight) {
+      this.facingRight = false;
+    }
 
-      if (this.x <= 0) {
-        this.direction = 1;
-      } else if (this.x + this.width >= this.game.width) {
-        this.direction = -1;
-      }
+    if (this.x <= 0) {
+      this.direction = 1;
+    } else if (this.x + this.width >= this.game.width) {
+      this.direction = -1;
+    }
 
-      this.distance += Math.abs(this.speed * deltaTime * 0.01);
+    this.distance += Math.abs(this.speed * deltaTime * 0.01);
 
-      if (this.distance >= this.walkDistance) {
-        this.direction *= -1;
-        this.distance = 0;
-      }
+    if (this.distance >= this.walkDistance) {
+      this.direction *= -1;
+      this.distance = 0;
+    }
+    if (this.isOnGround && this.currentState !== this.states[states.RUNNING]) {
+      this.setState(this.states[states.RUNNING]);
+      this.speed = 2.5;
     }
   }
 
@@ -219,8 +222,9 @@ export class SnakeEnemy extends Enemy {
     }
   }
   jump(){
-    this.vy = -50;
-    this.speed = 2.5;
+    this.setState(this.states[states.JUMPING]);
+    this.vy = -60;
+    this.speed = 4;
   }
   checkForVerticalCollision() {
     let enemyX, enemyY, enemyWidth, enemyHeight;
@@ -251,8 +255,8 @@ export class SnakeEnemy extends Enemy {
           enemyY + enemyHeight > blockTop &&
           enemyY + enemyHeight < blockBottom
         ) {
-          this.y = blockTop - (this.height / 4 + enemyHeight + 0.01);
           this.isOnGround = true;
+          this.y = blockTop - (this.height / 4 + enemyHeight + 0.01);
           this.vy = 0;
         } else if (enemyY < blockBottom && enemyY > blockTop) {
           this.y = blockBottom;

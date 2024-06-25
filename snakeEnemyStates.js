@@ -2,6 +2,7 @@ const states = {
   IDLE: 0,
   RUNNING: 1,
   ATTACKING: 2,
+  JUMPING: 3,
 };
 
 class State {
@@ -76,5 +77,36 @@ export class Attacking extends State {
 
   handleInput(input) {}
 }
+
+export class Jumping extends State {
+  constructor(enemy) {
+    super("Jumping");
+    this.enemy = enemy;
+    this.frameInterval = 1000 / 10;
+    this.frameTimer = 0;
+    this.maxFrame = 2;
+  }
+
+  enter() {
+    this.enemy.frameX = 0;
+    this.enemy.frameY = 3;
+    this.enemy.loop = false;
+  }
+
+  update(deltaTime) {
+    this.frameTimer += deltaTime;
+    if (this.frameTimer > this.frameInterval) {
+      this.frameTimer = 0;
+      if (this.enemy.frameX < this.maxFrame) {
+        this.enemy.frameX++;
+      }
+    }
+  }
+
+  draw(context) {}
+
+  handleInput(input) {}
+}
+
 
 export { states };

@@ -451,6 +451,7 @@ export class SnakeEnemy extends Enemy {
             ) {
               player.speed = 0;
               player.setState(6);
+              player.lives -= 3;
             }
             this.setState(this.states[states.RUNNING]);
             this.speed = 2.5;

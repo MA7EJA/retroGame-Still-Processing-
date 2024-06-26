@@ -5,7 +5,8 @@ const states = {
   FALLING: 3,
   SHOOTING: 4,
   RUNNINGSHOOTING: 5,
-  HURT: 6
+  HURT: 6,
+  DEAD: 7
 };
 
 class State {
@@ -214,5 +215,20 @@ export class Hurt extends State {
     if (this.player.frameX >= this.player.maxFrame) {
       this.player.setState(states.IDLE);
     }
+  }
+}
+
+export class Dead extends State {
+  constructor(player) {
+    super("Dead");
+    this.player = player;
+  }
+  enter() {
+    this.player.frameX = 0;
+    this.player.frameY = 5;
+    this.player.maxFrame = 4;
+    this.loop = false;
+  }
+  handleInput(input) {
   }
 }

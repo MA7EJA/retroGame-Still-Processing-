@@ -1,4 +1,4 @@
-import { Idle, Running, Jumping, Falling, Shooting, RunningShooting, Hurt } from "./playerStates.js";
+import { Idle, Running, Jumping, Falling, Shooting, RunningShooting, Hurt, Dead } from "./playerStates.js";
 import { Bullet } from "./bullet.js";
 
 export class Player {
@@ -32,6 +32,7 @@ export class Player {
       new Shooting(this),
       new RunningShooting(this),
       new Hurt(this),
+      new Dead(this)
     ];
     this.currentState = this.states[0];
     this.currentState.enter();
@@ -39,8 +40,22 @@ export class Player {
     this.floorCollisions = floorCollisions;
     this.isOnGround = false;
     this.lives = 10;
+    this.isDeleted = false;
   }
   update(input, deltaTime) {
+    if (this.lives <= 0) {
+      this.lives = 0;
+      
+      if (!(this.currentState instanceof Dead)) {
+        this.setState(7);
+      }
+      if (this.frameX < this.maxFrame) {
+        this.frameX++;
+      } else {
+        this.frameX = this.maxFrame;
+      }
+      return;
+    }
     this.currentState.handleInput(input);
 
     if(this.currentState instanceof Hurt){
@@ -115,7 +130,7 @@ export class Player {
   }
 
   draw(context) {
-
+    if (this.isDeleted) return;
     context.imageSmoothingEnabled = false;
     context.webkitImageSmoothingEnabled = false;
     context.mozImageSmoothingEnabled = false;

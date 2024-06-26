@@ -142,6 +142,7 @@ export class SnakeEnemy extends Enemy {
     if (this.isWaiting) {
       this.setState(this.states[states.IDLE]);
     }
+    this.checkPurpleRectCollisionWithPlayer();
   }
 
   draw(context) {
@@ -194,6 +195,13 @@ export class SnakeEnemy extends Enemy {
         this.width * 2.3,
         this.height * 0.5
       );
+      context.strokeStyle = "purple";
+      context.strokeRect(
+        this.x + this.width * 0.3,
+        this.y + this.height * 0.25,
+        this.width * 1.1,
+        this.height * 0.5
+      );
     } else {
       context.save();
       context.translate(this.x + this.width, this.y);
@@ -213,6 +221,16 @@ export class SnakeEnemy extends Enemy {
         this.width * 2.3,
         this.height * 0.5
       );
+      context.restore();
+
+      context.strokeStyle = "purple";
+      context.strokeRect(
+        this.x - this.width * 0.4,
+        this.y + this.height * 0.25,
+        this.width * 1.1,
+        this.height * 0.5
+      );
+      context.restore();
     }
   }
   checkForHorizontalCollision() {
@@ -328,7 +346,7 @@ export class SnakeEnemy extends Enemy {
 
     let yellowRectX, yellowRectY, yellowRectWidth, yellowRectHeight;
 
-    this.speed = 2.5
+    this.speed = 2.5;
     if (this.facingRight) {
       yellowRectX = this.x - this.width * 0.5;
       yellowRectY = this.y + this.height * 0.25;
@@ -360,6 +378,37 @@ export class SnakeEnemy extends Enemy {
       this.facingRight = true;
     }
     this.isWaiting = false;
+  }
+  checkPurpleRectCollisionWithPlayer() {
+    const player = this.player;
+
+    let playerX = player.x + player.width / 2.5;
+    let playerY = player.y + player.height / 3.5;
+    let playerWidth = player.width / 5;
+    let playerHeight = player.height / 2.5;
+
+    let aRectX, aRectY, aRectWidth, aRectHeight;
+
+    if (this.facingRight) {
+      aRectX = this.x + this.width * 0.3;
+      aRectY = this.y + this.height * 0.25;
+    } else {
+      aRectX = this.x - this.width * 0.4,
+      aRectY = this.y + this.height * 0.25;
+    }
+
+    aRectWidth = this.width * 1.1;
+    aRectHeight = this.height * 0.5;
+
+    if (
+      aRectX < playerX + playerWidth &&
+      aRectX + aRectWidth > playerX &&
+      aRectY < playerY + playerHeight &&
+      aRectY + aRectHeight > playerY
+    ) {
+      this.setState(this.states[states.ATTACKING]);
+      this.speed = 0;
+    }
   }
 }
 

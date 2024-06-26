@@ -34,6 +34,7 @@ window.addEventListener("load", function () {
       this.player.camera = this.camera;
       this.camera.enemies = this.enemies;
       this.input = new InputHandler();
+      this.fontColor = 'white'
     }
 
     update(deltaTime) {

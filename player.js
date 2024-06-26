@@ -38,6 +38,7 @@ export class Player {
     this.background = background;
     this.floorCollisions = floorCollisions;
     this.isOnGround = false;
+    this.lives = 10;
   }
   update(input, deltaTime) {
     this.currentState.handleInput(input);

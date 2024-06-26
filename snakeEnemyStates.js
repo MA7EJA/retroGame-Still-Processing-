@@ -85,11 +85,26 @@ export class Attacking extends State {
   constructor(enemy) {
     super("Attacking");
     this.enemy = enemy;
+    this.frameInterval = 1000 / 10;
+    this.frameTimer = 0;
   }
 
-  enter() {}
+  enter() {
+    this.enemy.frameX = 0;
+    this.enemy.frameY = 2;
+    this.enemy.maxFrame = 7;
+    this.enemy.loop = false;
+  }
 
-  update(deltaTime) {}
+  update(deltaTime) {
+    this.frameTimer += deltaTime;
+    if (this.frameTimer > this.frameInterval) {
+      this.frameTimer = 0;
+      if (this.enemy.frameX < this.enemy.maxFrame) {
+        this.enemy.frameX++;
+      }
+    }
+  }
 
   draw(context) {}
 

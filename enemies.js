@@ -85,6 +85,9 @@ export class SnakeEnemy extends Enemy {
     this.walkDistance = 150;
     this.distance = 0;
     this.isWaiting = false;
+    this.lastAttackTime = 0;
+    this.attackCooldown = 3000;
+    this.canAttack = true;
     this.states = {
       [states.IDLE]: new Idle(this),
       [states.RUNNING]: new Running(this),
@@ -102,6 +105,18 @@ export class SnakeEnemy extends Enemy {
     if (this.isWaiting) return;
     this.x += this.speed * this.direction * deltaTime * 0.01;
     this.frameTimer += deltaTime;
+    
+    if (this.currentState === this.states[states.ATTACKING]) {
+      this.currentState.update(deltaTime);
+      return;
+    }
+
+    if (!this.canAttack) {
+      const elapsedTime = Date.now() - this.lastAttackTime;
+      if (elapsedTime >= this.attackCooldown) {
+        this.canAttack = true;
+      }
+    }
 
     this.checkPlayerCollision();
 
@@ -143,6 +158,13 @@ export class SnakeEnemy extends Enemy {
       this.setState(this.states[states.IDLE]);
     }
     this.checkPurpleRectCollisionWithPlayer();
+
+    if (!this.canAttack) {
+      const elapsedTime = Date.now() - this.lastAttackTime;
+      if (elapsedTime >= this.attackCooldown) {
+        this.canAttack = true;
+      }
+    }
   }
 
   draw(context) {
@@ -199,7 +221,7 @@ export class SnakeEnemy extends Enemy {
       context.strokeRect(
         this.x + this.width * 0.3,
         this.y + this.height * 0.25,
-        this.width * 1.1,
+        this.width * 0.7,
         this.height * 0.5
       );
     } else {
@@ -225,9 +247,9 @@ export class SnakeEnemy extends Enemy {
 
       context.strokeStyle = "purple";
       context.strokeRect(
-        this.x - this.width * 0.4,
+        this.x - this.width * 0.01,
         this.y + this.height * 0.25,
-        this.width * 1.1,
+        this.width * 0.7,
         this.height * 0.5
       );
       context.restore();
@@ -393,11 +415,11 @@ export class SnakeEnemy extends Enemy {
       aRectX = this.x + this.width * 0.3;
       aRectY = this.y + this.height * 0.25;
     } else {
-      aRectX = this.x - this.width * 0.4,
+      aRectX = this.x - this.width * 0.01;
       aRectY = this.y + this.height * 0.25;
     }
 
-    aRectWidth = this.width * 1.1;
+    aRectWidth = this.width * 0.7;
     aRectHeight = this.height * 0.5;
 
     if (
@@ -406,8 +428,26 @@ export class SnakeEnemy extends Enemy {
       aRectY < playerY + playerHeight &&
       aRectY + aRectHeight > playerY
     ) {
-      this.setState(this.states[states.ATTACKING]);
-      this.speed = 0;
+      if (this.canAttack) {
+        this.setState(this.states[states.ATTACKING]);
+        this.speed = 0;
+        this.lastAttackTime = Date.now();
+        this.canAttack = false;
+
+        setTimeout(() => {
+          this.canAttack = true;
+        }, this.attackCooldown);
+
+        setTimeout(() => {
+          if (
+            this.currentState === this.states[states.ATTACKING] &&
+            this.frameX >= this.maxFrame
+          ) {
+            this.setState(this.states[states.RUNNING]);
+            this.speed = 2.5;
+          }
+        }, this.frameInterval * this.maxFrame);
+      }
     }
   }
 }

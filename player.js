@@ -1,4 +1,4 @@
-import { Idle, Running, Jumping, Falling, Shooting, RunningShooting } from "./playerStates.js";
+import { Idle, Running, Jumping, Falling, Shooting, RunningShooting, Hurt } from "./playerStates.js";
 import { Bullet } from "./bullet.js";
 
 export class Player {
@@ -31,6 +31,7 @@ export class Player {
       new Falling(this),
       new Shooting(this),
       new RunningShooting(this),
+      new Hurt(this),
     ];
     this.currentState = this.states[0];
     this.currentState.enter();
@@ -40,6 +41,10 @@ export class Player {
   }
   update(input, deltaTime) {
     this.currentState.handleInput(input);
+
+    if(this.currentState instanceof Hurt){
+      this.speed = 0;
+    }
 
     if (this.currentState instanceof Shooting) {
       this.speed = 0;

@@ -4,7 +4,8 @@ const states = {
   JUMPING: 2,
   FALLING: 3,
   SHOOTING: 4,
-  RUNNINGSHOOTING: 5
+  RUNNINGSHOOTING: 5,
+  HURT: 6
 };
 
 class State {
@@ -195,5 +196,23 @@ export class CreateBulletAction {
       this.player.facingRight ? 1 : -1
     );
     this.player.bullets.push(bullet);
+  }
+}
+
+export class Hurt extends State {
+  constructor(player) {
+    super("Hurt");
+    this.player = player;
+  }
+  enter() {
+    this.player.frameX = 5;
+    this.player.frameY = 2;
+    this.player.maxFrame = 7;
+    this.loop = false;
+  }
+  handleInput(input) {
+    if (this.player.frameX >= this.player.maxFrame) {
+      this.player.setState(states.IDLE);
+    }
   }
 }

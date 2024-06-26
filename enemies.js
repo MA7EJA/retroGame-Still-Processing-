@@ -443,6 +443,15 @@ export class SnakeEnemy extends Enemy {
             this.currentState === this.states[states.ATTACKING] &&
             this.frameX >= this.maxFrame
           ) {
+            if (
+              aRectX < playerX + playerWidth &&
+              aRectX + aRectWidth > playerX &&
+              aRectY < playerY + playerHeight &&
+              aRectY + aRectHeight > playerY
+            ) {
+              player.speed = 0;
+              player.setState(6);
+            }
             this.setState(this.states[states.RUNNING]);
             this.speed = 2.5;
           }

@@ -85,7 +85,7 @@ export class Attacking extends State {
   constructor(enemy) {
     super("Attacking");
     this.enemy = enemy;
-    this.frameInterval = 1000 / 10;
+    this.frameInterval = 1000 / 8;
     this.frameTimer = 0;
   }
 

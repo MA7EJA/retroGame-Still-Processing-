@@ -1,3 +1,4 @@
+
 import {
   states,
   Idle,
@@ -71,6 +72,7 @@ class SpiderEnemy extends Enemy {
 export class SnakeEnemy extends Enemy {
   constructor(game, player, floorCollisions) {
     super(game, floorCollisions);
+    this.player = player;
     this.spriteWidth = 64;
     this.spriteHeight = 64;
     this.width = this.spriteWidth * 2;
@@ -100,6 +102,8 @@ export class SnakeEnemy extends Enemy {
     if (this.isWaiting) return;
     this.x += this.speed * this.direction * deltaTime * 0.01;
     this.frameTimer += deltaTime;
+
+    this.checkPlayerCollision();
 
     if (this.direction === 1 && !this.facingRight) {
       this.facingRight = true;
@@ -135,7 +139,7 @@ export class SnakeEnemy extends Enemy {
     ) {
       this.setState(this.states[states.FALLING]);
     }
-    if (this.isWaiting){
+    if (this.isWaiting) {
       this.setState(this.states[states.IDLE]);
     }
   }
@@ -183,6 +187,13 @@ export class SnakeEnemy extends Enemy {
         this.width * 0.5,
         this.height * 0.5
       );
+      context.strokeStyle = "yellow";
+      context.strokeRect(
+        this.x - this.width * 0.5,
+        this.y + this.height * 0.25,
+        this.width * 2.3,
+        this.height * 0.5
+      );
     } else {
       context.save();
       context.translate(this.x + this.width, this.y);
@@ -194,6 +205,14 @@ export class SnakeEnemy extends Enemy {
         this.height * 0.5
       );
       context.restore();
+
+      context.strokeStyle = "yellow";
+      context.strokeRect(
+        this.x - this.width * 0.8,
+        this.y + this.height * 0.25,
+        this.width * 2.3,
+        this.height * 0.5
+      );
     }
   }
   checkForHorizontalCollision() {
@@ -297,6 +316,50 @@ export class SnakeEnemy extends Enemy {
       enemyX <= collisionBlock.position.x + collisionBlock.width &&
       enemyX + enemyWidth >= collisionBlock.position.x
     );
+  }
+
+  checkPlayerCollision() {
+    const player = this.player;
+
+    let playerX = player.x + player.width / 2.5;
+    let playerY = player.y + player.height / 3.5;
+    let playerWidth = player.width / 5;
+    let playerHeight = player.height / 2.5;
+
+    let yellowRectX, yellowRectY, yellowRectWidth, yellowRectHeight;
+
+    this.speed = 2.5
+    if (this.facingRight) {
+      yellowRectX = this.x - this.width * 0.5;
+      yellowRectY = this.y + this.height * 0.25;
+    } else {
+      yellowRectX = this.x - this.width * 0.8;
+      yellowRectY = this.y + this.height * 0.25;
+    }
+
+    yellowRectWidth = this.width * 2.3;
+    yellowRectHeight = this.height * 0.5;
+
+    if (
+      playerX < yellowRectX + yellowRectWidth &&
+      playerX + playerWidth > yellowRectX &&
+      playerY < yellowRectY + yellowRectHeight &&
+      playerY + playerHeight > yellowRectY
+    ) {
+      this.moveToPlayer();
+      this.speed = 5;
+    }
+  }
+
+  moveToPlayer() {
+    if (this.player.x < this.x) {
+      this.direction = -1;
+      this.facingRight = false;
+    } else {
+      this.direction = 1;
+      this.facingRight = true;
+    }
+    this.isWaiting = false;
   }
 }
 

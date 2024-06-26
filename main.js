@@ -4,6 +4,7 @@ import { Background } from "./background.js";
 import { FloorCollisions } from "./collisions.js";
 import { Camera } from "./camera.js";
 import { SnakeEnemy } from "./enemies.js";
+import { ui } from "./ui.js";
 
 window.addEventListener("load", function () {
   const canvas = document.getElementById("canvas");
@@ -34,6 +35,7 @@ window.addEventListener("load", function () {
       this.player.camera = this.camera;
       this.camera.enemies = this.enemies;
       this.input = new InputHandler();
+      this.ui = new ui(this, this.player)
       this.fontColor = 'white'
     }
 
@@ -50,6 +52,7 @@ window.addEventListener("load", function () {
       this.floorCollisions.draw(context);
       this.player.draw(context);
       this.enemies.forEach((enemy) => enemy.draw(context));
+      this.ui.draw(context);
     }
   }
 

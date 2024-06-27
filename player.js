@@ -41,6 +41,9 @@ export class Player {
     this.isOnGround = false;
     this.lives = 10;
     this.isDeleted = false;
+    this.isInvincible = false;
+    this.invincibleTimer = 0;
+    this.invincibleDuration = 2000;
   }
   update(input, deltaTime) {
     if (this.lives <= 0) {
@@ -60,6 +63,16 @@ export class Player {
 
     if(this.currentState instanceof Hurt){
       this.speed = 0;
+      this.isInvincible = true;
+      this.invincibleTimer = 0;
+    }
+
+    if (this.isInvincible) {
+      this.invincibleTimer += deltaTime;
+      if (this.invincibleTimer >= this.invincibleDuration) {
+        this.isInvincible = false;
+        this.invincibleTimer = 0;
+      }
     }
 
     if (this.currentState instanceof Shooting) {
@@ -135,6 +148,15 @@ export class Player {
     context.webkitImageSmoothingEnabled = false;
     context.mozImageSmoothingEnabled = false;
     context.msImageSmoothingEnabled = false;
+    if (this.isInvincible) {
+      if (Math.floor(this.invincibleTimer / 100) % 2) {
+        context.globalAlpha = 0.5;
+      } else {
+        context.globalAlpha = 1.0;
+      }
+    } else {
+      context.globalAlpha = 1.0;
+    }
     if (this.facingRight) {
       context.drawImage(
         this.image,
@@ -164,6 +186,8 @@ export class Player {
       );
       context.restore();
     }
+
+    context.globalAlpha = 1.0;
     context.strokeRect(
       this.x + this.width / 2.5,
       this.y + this.height / 3.5,

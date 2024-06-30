@@ -40,6 +40,7 @@ export class Player {
     this.floorCollisions = floorCollisions;
     this.isOnGround = false;
     this.lives = 10;
+    this.previousLives = this.lives;
     this.isDeleted = false;
     this.isInvincible = false;
     this.invincibleTimer = 0;
@@ -59,6 +60,11 @@ export class Player {
       }
       return;
     }
+    if (this.lives < this.previousLives) {
+      const decreaseAmount = this.previousLives - this.lives;
+      this.game.ui.frameY += decreaseAmount;
+    }
+    this.previousLives = this.lives;
     this.currentState.handleInput(input);
 
     if(this.currentState instanceof Hurt){

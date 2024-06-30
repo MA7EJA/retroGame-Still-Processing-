@@ -11,6 +11,12 @@ export class ui {
     this.frameX = 0;
     this.frameY = 0;
     this.image = document.getElementById("GuiElements");
+    this.pSpriteWidth = 32;
+    this.pSriteHeight = 32;
+    this.pWidth = this.pSpriteWidth * 2;
+    this.pHeight = this.pSriteHeight * 2;
+    this.pFrameX = 1;
+    this.pFrameY = 1.5;
   }
   draw(context) {
     context.font = this.fontSize + "px" + this.fontFamily;
@@ -23,10 +29,21 @@ export class ui {
       this.frameY * this.spriteHeight,
       this.spriteWidth,
       this.spriteHeight,
-      0,
+      54,
       -10,
       this.width,
       this.height
+    );
+    context.drawImage(
+      this.image,
+      this.pFrameX * this.pSpriteWidth,
+      this.pFrameY * this.pSriteHeight,
+      this.pSpriteWidth,
+      this.pSriteHeight,
+      -10,
+      -10,
+      this.pWidth,
+      this.pHeight
     );
   }
 }

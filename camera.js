@@ -46,7 +46,7 @@ export class Camera {
         if (cameraBoxLeft >= backgroundLeft) {
           const effectiveDistance = Math.min(
             distanceToMove,
-            this.cameraBox.position.x - 1
+            this.cameraBox.position.x + 1
           );
           this.moveSceneObjects(-effectiveDistance);
           player.x -= effectiveDistance;
@@ -110,6 +110,12 @@ export class Camera {
       player.y - this.y + player.height / 3.5,
       player.width / 5,
       player.height / 2.5
+    );
+    context.strokeRect(
+      this.cameraBox.position.x - this.x,
+      this.cameraBox.position.y - this.y,
+      this.cameraBox.width,
+      this.cameraBox.height
     );
     context.fillStyle = "rgba(0, 0, 255, 0.4)";
     context.fillRect(

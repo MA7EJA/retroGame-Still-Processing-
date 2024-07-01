@@ -25,6 +25,7 @@ export class Player {
     this.Bullet = Bullet;
     this.bullets = [];
     this.ammo = 6;
+    this.previousAmmo = this.ammo;
     this.reloadTime = 2500;
     this.lastReloadTime = 0;
     this.states = [
@@ -83,7 +84,9 @@ export class Player {
         this.invincibleTimer = 0;
       }
     }
-    this.lastReloadTime += deltaTime;
+    if(this.ammo < 6){
+      this.lastReloadTime += deltaTime;
+    }
 
     if (this.ammo < 3) {
       this.reloadTime = 1600;
@@ -91,10 +94,30 @@ export class Player {
       this.reloadTime = 2500;
     }
 
-    if (this.lastReloadTime >= this.reloadTime && this.ammo < 6) {
-      this.ammo += 1;
-      this.lastReloadTime = 0;
+    if (this.lastReloadTime >= this.reloadTime) {
+      if (this.ammo < 6) {
+        this.ammo += 1;
+        this.lastReloadTime = 0;
+        if (this.game.ui.aFrameY > 3) {
+          this.game.ui.aFrameY -= 1;
+        }
+        this.previousAmmo = this.ammo;
+      }
     }
+
+    if (this.ammo < this.previousAmmo) {
+      if (this.game.ui.aFrameY < 9) {
+        this.game.ui.aFrameY += 1;
+      }
+    }
+
+     if (this.ammo === 0) {
+       this.game.ui.aFrameY = 1;
+     }else if(this.ammo === 1){
+      this.game.ui.aFrameY = 8;
+     }
+
+    this.previousAmmo = this.ammo;
 
     if (this.currentState instanceof Shooting) {
       this.speed = 0;

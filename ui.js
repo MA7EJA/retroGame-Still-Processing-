@@ -17,6 +17,12 @@ export class ui {
     this.pHeight = this.pSriteHeight * 2;
     this.pFrameX = 1;
     this.pFrameY = 2.5;
+    this.aSpriteWidth = 32;
+    this.aSriteHeight = 16;
+    this.aWidth = this.aSpriteWidth * 2;
+    this.aHeight = this.aSriteHeight * 2;
+    this.aFrameX = 2;
+    this.aFrameY = 3;
   }
   draw(context) {
     context.font = this.fontSize + "px" + this.fontFamily;
@@ -44,6 +50,17 @@ export class ui {
       -10,
       this.pWidth,
       this.pHeight
+    );
+    context.drawImage(
+      this.image,
+      this.aFrameX * this.aSpriteWidth,
+      this.aFrameY * this.aSriteHeight,
+      this.aSpriteWidth,
+      this.aSriteHeight,
+      54,
+      22,
+      this.aWidth,
+      this.aHeight
     );
   }
 }

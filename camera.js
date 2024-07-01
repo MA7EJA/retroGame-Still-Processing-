@@ -34,7 +34,7 @@ export class Camera {
         if (cameraBoxRight <= backgroundRight) {
           const effectiveDistance = Math.min(
             distanceToMove,
-            cameraBoxRight - this.gameWidth - 1
+            cameraBoxRight - this.gameWidth
           );
           this.moveSceneObjects(-effectiveDistance);
           player.x -= effectiveDistance;

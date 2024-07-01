@@ -36,7 +36,7 @@ export class Player {
       new Shooting(this),
       new RunningShooting(this),
       new Hurt(this),
-      new Dead(this)
+      new Dead(this),
     ];
     this.currentState = this.states[0];
     this.currentState.enter();
@@ -53,7 +53,7 @@ export class Player {
   update(input, deltaTime) {
     if (this.lives <= 0) {
       this.lives = 0;
-      
+
       if (!(this.currentState instanceof Dead)) {
         this.setState(7);
       }
@@ -71,7 +71,7 @@ export class Player {
     this.previousLives = this.lives;
     this.currentState.handleInput(input);
 
-    if(this.currentState instanceof Hurt){
+    if (this.currentState instanceof Hurt) {
       this.speed = 0;
       this.isInvincible = true;
       this.invincibleTimer = 0;
@@ -84,7 +84,7 @@ export class Player {
         this.invincibleTimer = 0;
       }
     }
-    if(this.ammo < 6){
+    if (this.ammo < 6) {
       this.lastReloadTime += deltaTime;
     }
 
@@ -111,11 +111,11 @@ export class Player {
       }
     }
 
-     if (this.ammo === 0) {
-       this.game.ui.aFrameY = 1;
-     }else if(this.ammo === 1){
+    if (this.ammo === 0) {
+      this.game.ui.aFrameY = 1;
+    } else if (this.ammo === 1) {
       this.game.ui.aFrameY = 8;
-     }
+    }
 
     this.previousAmmo = this.ammo;
 
@@ -137,11 +137,11 @@ export class Player {
       }
     }
     this.x += this.speed * deltaTime * 0.01;
-    
-     this.bullets.forEach((bullet) => bullet.update(deltaTime));
-     this.bullets = this.bullets.filter(
-       (bullet) => bullet.x > 0 && bullet.x < this.game.width
-     );
+
+    this.bullets.forEach((bullet) => bullet.update(deltaTime));
+    this.bullets = this.bullets.filter(
+      (bullet) => bullet.x > 0 && bullet.x < this.game.width
+    );
 
     this.checkForHorizontalCollision();
 
@@ -159,6 +159,8 @@ export class Player {
     if (this.vy > 2 && !(this.currentState instanceof Falling)) {
       this.setState(3);
     }
+
+    this.checkBulletBlockCollision();
 
     if (this.frameTimer > this.frameInterval) {
       this.frameTimer = 0;
@@ -179,11 +181,45 @@ export class Player {
   updateBullets(deltaTime) {
     this.bullets.forEach((bullet, index) => {
       bullet.update(deltaTime);
-      
+
       if (bullet.x < 0 || bullet.x > this.game.width) {
         this.bullets.splice(index, 1);
       }
     });
+  }
+
+  checkBulletBlockCollision() {
+    for (let i = 0; i < this.bullets.length; i++) {
+      const bullet = this.bullets[i];
+
+      for (let j = 0; j < this.floorCollisions.collisionBlocks.length; j++) {
+        const collisionBlock = this.floorCollisions.collisionBlocks[j];
+
+        if (this.bulletBlockCollision(bullet, collisionBlock)) {
+          this.bullets.splice(i, 1);
+          i--;
+          break;
+        }
+      }
+    }
+  }
+
+  bulletBlockCollision(bullet, block) {
+    let collisionX, collisionY;
+
+    if (bullet.direction === -1) {
+      collisionX = bullet.x + bullet.width / 2;
+      collisionY = bullet.y + bullet.height / 1.7;
+    } else {
+      collisionX = bullet.x + bullet.width / 3;
+      collisionY = bullet.y + bullet.height / 1.7;
+    }
+    return (
+      collisionX + bullet.width / 4 >= block.position.x &&
+      collisionX <= block.position.x + block.width &&
+      collisionY + bullet.height / 6 >= block.position.y &&
+      collisionY <= block.position.y + block.height
+    );
   }
 
   draw(context) {
@@ -275,13 +311,13 @@ export class Player {
           if (playerX + playerWidth > blockLeft && playerX < blockLeft) {
             collisionFromLeft = true;
             this.speed = 0;
-            this.x = blockLeft - (this.width / 2.4 + playerWidth);
+            this.x = blockLeft - (this.width / 2.49 + playerWidth);
           } else if (
             playerX < blockRight &&
             playerX + playerWidth > blockRight
           ) {
             collisionFromRight = true;
-            this.x = blockRight - this.width / 2.6;
+            this.x = blockRight - this.width / 2.51;
             this.speed = 0;
           }
         }

@@ -29,6 +29,8 @@ export class ui {
     context.textAlight = "left";
     context.fillStyle = this.game.fontColor;
     context.fillText("Lives: " + this.player.lives, 20, 50);
+    context.fillStyle = "black";
+    context.fillRect(0, 0, canvas.width, 56);
     context.drawImage(
       this.image,
       this.frameX * this.spriteWidth,

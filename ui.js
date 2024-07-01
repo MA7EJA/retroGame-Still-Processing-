@@ -16,7 +16,7 @@ export class ui {
     this.pWidth = this.pSpriteWidth * 2;
     this.pHeight = this.pSriteHeight * 2;
     this.pFrameX = 1;
-    this.pFrameY = 1.5;
+    this.pFrameY = 2.5;
   }
   draw(context) {
     context.font = this.fontSize + "px" + this.fontFamily;

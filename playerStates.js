@@ -32,7 +32,11 @@ export class Idle extends State{
           this.player.setState(states.RUNNING);
         } else if (input.includes("ArrowUp") && this.player.isOnGround) {
           this.player.setState(states.JUMPING);
-        } else if (input.includes("x") && this.player.isOnGround) {
+        } else if (
+          input.includes("x") &&
+          this.player.isOnGround &&
+          this.player.ammo > 0
+        ) {
           this.player.setState(states.SHOOTING);
         }
     }
@@ -60,7 +64,8 @@ export class Running extends State {
     } else if (
       input.includes("x") &&
       (input.includes("ArrowLeft") || input.includes("ArrowRight")) &&
-      this.player.isOnGround
+      this.player.isOnGround &&
+      this.player.ammo > 0
     ) {
       this.player.setState(states.RUNNINGSHOOTING);
     }
@@ -128,6 +133,12 @@ export class Shooting extends State {
     } else {
       this.loop = true;
     }
+    if (
+      this.player.frameX === this.player.maxFrame && input.includes("x") &&
+      this.player.ammo === 0
+    ) {
+      this.player.setState(states.IDLE);
+    }
 
     if (this.player.frameX === 2 && !this.bulletCreated) {
       this.createBulletAction.execute();
@@ -153,7 +164,11 @@ export class RunningShooting extends State {
     this.loop = false;
   }
   handleInput(input) {
-    if (this.player.frameX >= this.player.maxFrame && !input.includes("x")) {
+    if (
+      this.player.frameX >= this.player.maxFrame &&
+      !input.includes("x") &&
+      !this.player.ammo == 0
+    ) {
       this.player.setState(states.IDLE);
       this.loop = false;
     } else {
@@ -191,12 +206,15 @@ export class CreateBulletAction {
       ? this.player.x + this.player.width / 2.5
       : this.player.x;
 
-    const bullet = new this.player.Bullet(
-      bulletX,
-      this.player.y,
-      this.player.facingRight ? 1 : -1
-    );
-    this.player.bullets.push(bullet);
+    if(!this.player.ammo == 0){
+      const bullet = new this.player.Bullet(
+        bulletX,
+        this.player.y,
+        this.player.facingRight ? 1 : -1
+      );
+      this.player.bullets.push(bullet);
+      this.player.ammo -= 1;
+    }
   }
 }
 

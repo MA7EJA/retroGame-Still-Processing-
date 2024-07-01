@@ -24,6 +24,9 @@ export class Player {
     this.facingRight = true;
     this.Bullet = Bullet;
     this.bullets = [];
+    this.ammo = 6;
+    this.reloadTime = 2500;
+    this.lastReloadTime = 0;
     this.states = [
       new Idle(this),
       new Running(this),
@@ -79,6 +82,18 @@ export class Player {
         this.isInvincible = false;
         this.invincibleTimer = 0;
       }
+    }
+    this.lastReloadTime += deltaTime;
+
+    if (this.ammo < 3) {
+      this.reloadTime = 1600;
+    } else {
+      this.reloadTime = 2500;
+    }
+
+    if (this.lastReloadTime >= this.reloadTime && this.ammo < 6) {
+      this.ammo += 1;
+      this.lastReloadTime = 0;
     }
 
     if (this.currentState instanceof Shooting) {
